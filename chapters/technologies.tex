@@ -201,7 +201,7 @@ There are some cases when the website needs more complex logic, such as modifyin
 
 There are various methods to send data to the server, such as including it in the HTTP header or using the values from <input /> tags with \textbf{hx-include} or \textbf{hx-vals}.
 
-If the application consists of several pages, navigation between them is necessary. This can be done with HTMX requests, in which the server sends not only the page but also the updated navigation bar. A request will cause the new page to appear and the navigation bar to be updated accordingly. This can be easily implemented with HTMX out-of-band requests\footnote{https://htmx.org/docs/#oob_swaps} and tags. The listing \ref{lst:htmx-oob} shows the request for a page and responses to the new page with the updated navigation bar.
+If the application consists of several pages, navigation between them is necessary. This can be done with HTMX requests, in which the server sends not only the page but also the updated navigation bar. A request will cause the new page to appear and the navigation bar to be updated accordingly. This can be easily implemented with HTMX out-of-band requests and tags. The listing \ref{lst:htmx-oob} shows the request for a page and responses to the new page with the updated navigation bar.
 
 \begin{lstlisting}[caption=Navigation with HTMX out-of-band request,label=lst:htmx-oob, float]
 // The initial navigation bar
