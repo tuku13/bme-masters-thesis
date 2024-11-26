@@ -130,7 +130,9 @@ In addition to the entities detailed before, there are more entities related to 
 
 Each AnswerScore has a max\_score and score field, which holds the maximum available and the obtained score. It establishes three distinct relationships corresponding to different question types. These relationships are structured with cardinality constraints, ensuring that a single AnswerScore can be linked to only one question at a time, maintaining a one-to-zero or one-to-one connection depending on the specific question type. Figure \ref{fig:er-quiz-result} shows all the entities and relations mentioned in these paragraphs.
 
-\subsubsection{Learn list}
+\subsubsection{Learning list}
+
+LearnListAddedItem is a small entity that links the users to the quizzes they decided to start learning with the spaced repetition algorithm. When a LearnListAddItem is inserted, the platform automatically creates and schedules ReviewItem entities for each quiz question with initial learning parameters. Also, by removing a learn list item, the ReviewItems are deleted. Figure \ref{fig:er-learn-list} shows the connection between the user and the selected quizzes in the context of a learning list.
 
 \begin{figure}[H]
     \centering
@@ -141,12 +143,32 @@ Each AnswerScore has a max\_score and score field, which holds the maximum avail
 
 \subsubsection{Review items}
 
+The ReviewItem item is the core entity of the spaced repetition algorithm. When the user adds a quiz to its learning list, one instance is created and scheduled for learning immediately for each question. A ReviewItem is always linked to the user; each relation includes strictly one question. Figure \ref{fig:er-review-items} shows these relations.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-review-items.png}
     \caption{ER Diagram for review items}
-    \label{fig:er-review items}
+    \label{fig:er-review-items}
 \end{figure}
+
+It holds all the information the learning algorithm uses to determine the next review date. It has fields for the ease factor, the difficulty, and the user's correct answer streak. It also contains the learning interval time and the next review date. The spaced repetitions algorithm determines and controls all the information based on the user's answers and the previous values of the ReviewItem.
+
+\subsection{Database schema}
+
+\subsection{Key tables and their relationships}
+
+\subsubsection{Core tables}
+    
+\subsubsection{Supporting tables}
+    
+\subsection{Data modeling decisions}
+
+\subsubsection{Indexing strategy}
+
+\subsubsection{Data type selection}
+
+\subsubsection{Constrains and integrity rules}
 
 \subsection{Database schema}
 
