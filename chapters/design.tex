@@ -70,7 +70,83 @@ We use a similar structure for production but without the Gemini model. We also 
 
 \section{Database Design}
 
+Database design and software selection are critical parts of every web application; the same applies to the platform. Thus, we chose a relational database, Postgres, to store and serve the platform's data. I write about the database software selection and its rationale after introducing the data model from multiple aspects and the decisions behind them.
+
+\subsection{Database software selection}
+
+Postgres is one of the most popular Database Manager System (DBMS) software available today. It is free and open-source and offers a ready-to-use solution as a Docker container. We have worked with it for different projects through the years, and it has always been a good choice. So, its familiarity and reliability were the most important reasons for selecting it, besides its performance and wide adaption at database providers. 
+
+Although it is a traditional database, it is extendable with third-party extensions. Its package manager is called trunk\footnote{https://pgt.dev/}, and it is effortless to install database packages by using it. We installed pgvector\footnote{https://github.com/pgvector/pgvector} for vector database features for the AI and another one called pgchron\footnote{https://github.com/citusdata/pg_cron} for scheduling session-related tasks.
+
 \subsection{Entity-Relationship diagrams}
+
+This section discusses the entities and their relationships in the application at this layer. I split it up into six smaller parts for easier understanding and overviewing.
+
+\subsubsection{Users and sessions}
+
+The database has two entities tightly connected to the user: User and Session. The User entity holds regular information about the user, like name, email, and hashed password, while the session stores the current user's session and its validity. When the user authenticates, a session is created and sent to the user's computer as a session cookie for later use. The session ID is used for authentication throughout the whole platform and has an expiration date when a pgchron task automatically deletes it. Figure \ref{fig:er-user-and-session} displays the entities and the relationship between them.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-user-and-session.png}
+    \caption{ER Diagram: User and Session}
+    \label{fig:er-user-and-session}
+\end{figure}
+
+\subsubsection{Quizzes and questions}
+
+The platform's core entities are the Quizzes and their questions. Each quiz has a name, description, and creator and is linked to different types of questions. There are three types of questions: SingleChoiceQuestion, a question with only one correct answer; MultipleChoiceQuestion, which can have multiple correct answers; and TrueOrFalseQuestion, aka a boolean question. Each type has its entity and table in the database. They are mostly the same; they all have a more extended text field describing the question and differ in the answer type.
+
+The quizzes can be accessed through a QuizAccess entity, which links the user to a quiz with a role. By default, an instance with an owner role is generated automatically when a user creates a quiz. This abstraction allows controlling which quiz can be viewed or edited by whom. It also makes it available for future development as a platform for sharing private quizzes or creating public ones. Figure \ref{fig:er-quizzes} displays the quizzes, types of questions, and accesses in an ER diagram.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-quizzes.png}
+    \caption{ER Diagram for quizzes and questions}
+    \label{fig:er-quizzes}
+\end{figure}
+
+\subsubsection{Quiz sessions}
+
+Another essential entity category is related to answering questions. The central entity is the QuizSession, which holds the information together for quiz completion. It accounts for start and finish time and links to answers connected to questions. And it is also related to the quiz result if it is submitted. Some answer entities hold the information of the user's answer to the given question. Figure \ref{fig:er-quiz-session} shows these relations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-quiz-sessions.png}
+    \caption{ER Diagram for quiz sessions}
+    \label{fig:er-quiz-session}
+\end{figure}
+
+\subsubsection{Answers and quiz results}
+
+In addition to the entities detailed before, there are more entities related to QuizSession, but now, it is for storing the scores for the answers and the results of the finished one. When a quiz is submitted and the session is finished, AnswerScore entities are created, which store the user's score for their given answers, and a question result record is also added with total scores. QuizResult is just a supporting entity for later extensibility capabilities; currently, it could have been merged into the QuizSession. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-quiz-result.png}
+    \caption{ER Diagram for answers and quiz results}
+    \label{fig:er-quiz-result}
+\end{figure}
+
+Each AnswerScore has a max\_score and score field, which holds the maximum available and the obtained score. It establishes three distinct relationships corresponding to different question types. These relationships are structured with cardinality constraints, ensuring that a single AnswerScore can be linked to only one question at a time, maintaining a one-to-zero or one-to-one connection depending on the specific question type. Figure \ref{fig:er-quiz-result} shows all the entities and relations mentioned in these paragraphs.
+
+\subsubsection{Learn list}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-learn-list.png}
+    \caption{ER Diagram for learn list}
+    \label{fig:er-learn-list}
+\end{figure}
+
+\subsubsection{Review items}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-review-items.png}
+    \caption{ER Diagram for review items}
+    \label{fig:er-review items}
+\end{figure}
 
 \subsection{Database schema}
 
