@@ -154,37 +154,42 @@ The ReviewItem item is the core entity of the spaced repetition algorithm. When 
 
 It holds all the information the learning algorithm uses to determine the next review date. It has fields for the ease factor, the difficulty, and the user's correct answer streak. It also contains the learning interval time and the next review date. The spaced repetitions algorithm determines and controls all the information based on the user's answers and the previous values of the ReviewItem.
 
-\subsection{Database schema}
+\subsubsection{Data type selection}
 
-\subsection{Key tables and their relationships}
+The primary rationale behind selecting the data types was to minimize storage usage and optimize performance. Regardless of this, most variables have NON-NULL constraints wherever possible to avoid handling these cases on the backend side. In the cases where NULL values are allowed, they have a particular purpose. For example, the answer entities' answer fields with NULL values mean the user did not answer them. The selected data types can be grouped into the following categories: identifiers, numbers, texts, and time.
 
-\subsubsection{Core tables}
-    
-\subsubsection{Supporting tables}
-    
-\subsection{Data modeling decisions}
+The Postgres database offers numeric and UUID-based data types for identifying records. We initially decided to use the UUID fields as identifiers because they are usable across different services. It was a good idea because it worked, but it needed some configuration for the code generation in the database library on the backend side. However, we only used one database for the whole system. Thus, the advantages over the numeric IDs were negligible.
+
+Although the database offers several numeric\footnote{https://www.postgresql.org/docs/current/datatype-numeric.html} types, the platform only needed a few of them. The role ID was a small int, which is a 2-byte long integer number, and that was more than enough because it's like an enum with very few possible values. The correct answer streak and learning interval were INT types, as they can have slightly larger values over time. In addition, non-integer numbers were needed in some places, e.g., score, max\_score, ease\_factor, and difficulty; here, the database's FLOAT type is used.
+
+We chose the most straightforward to use for textual fields, the unlimited-length text, also called text. It could be more efficient, but these fields are primarily used for reading in one piece, not searching.
+
+Time synchronization between components is a must for even small systems. Proper date and time type selection is the bedrock of this. We chose the timestamp type, which is the most detailed representation of time in 8 bytes and is supported by most frameworks and libraries. However, the platform needed some configuration because of Go's nil-handling approach. One challenge was creating and parsing it correctly to be processed and displayed. This type was used for the user sessions, quiz sessions, and learning algorithm scheduling.
 
 \subsubsection{Indexing strategy}
 
-\subsubsection{Data type selection}
+A reasonable indexing strategy can boost a database's performance, accelerating its other components. However, a poor strategy could have the opposite effect on a system. Our indexing strategy was to create an index to reduce the overall execution time on columns affected by the queries' WHERE clauses or table JOINs. These columns were UUID types in almost all cases, and timestamps were used only once in the question session table.
 
 \subsubsection{Constrains and integrity rules}
 
-\subsection{Database schema}
+System integrity is one of the most critical requirements, if not the most vital. Proper settings and rules can enforce it. To keep the database consistent, we used these additional constraints: ON DELETE CASCASE, UNIQUE, and CHECK. The first one ensures that when a record is deleted, all the records in other tables referring to it are also deleted. The UNIQUE was used to avoid inserting a record already in the table again. Finally, the CHECK was used in the ANSWER\_SCORES and REVIEW\_ITEMS tables to prevent multiple questions from being linked to them. Listing \ref{lst:db-check-constraint} shows an example using the CHECK constraint on the ANSWER\_SCORES table.
 
-\subsection{Key tables and their relationships}
-
-\subsubsection{Core tables}
-    
-\subsubsection{Supporting tables}
-    
-\subsection{Data modeling decisions}
-
-\subsubsection{Indexing strategy}
-
-\subsubsection{Data type selection}
-
-\subsubsection{Constrains and integrity rules}
+\begin{lstlisting}[caption=Using CHECK constraint,label=lst:db-check-constraint, float]
+CREATE TABLE IF NOT EXISTS answer_scores(
+    id UUID PRIMARY KEY NOT NULL,
+    quiz_result_id UUID REFERENCES quiz_results(id) ON DELETE CASCADE NOT NULL,
+    single_choice_answer_id UUID REFERENCES single_choice_answers(id) NULL,
+    multiple_choice_answer_id UUID REFERENCES multiple_choice_answers(id) NULL,
+    true_or_false_answer_id UUID REFERENCES true_or_false_answers(id) NULL,
+    CHECK (
+        (single_choice_answer_id IS NOT NULL)::int +
+        (multiple_choice_answer_id IS NOT NULL)::int +
+        (true_or_false_answer_id IS NOT NULL)::int = 1
+    ),
+    max_score FLOAT NOT NULL,
+    score FLOAT NOT NULL
+);
+\end{lstlisting}
 
 \section{Frontend Design}
 
