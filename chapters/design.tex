@@ -192,30 +192,86 @@ CREATE TABLE IF NOT EXISTS answer_scores(
 \end{lstlisting}
 
 \section{Frontend Design}
+TODO
 
-\subsection{User Interface (UI) design principles}
+\subsection{User Interface design principles}
 
 \subsubsection{Chosen design metolodogy}
 
-\subsubsection{User experience (UX) goals}
+The frontend design methodology follows a minimalist, modern approach similar to shadcn/ui\footnote{https://ui.shadcn.com/}, a UI component collection popularized by Vercel\footnote{https://vercel.com/} made for React and other web frameworks. The application does not use these components and styles because HTMX is not supported directly. Still, their source code is publicly available, and these components are made to copy-paste and customize later. It served as a good starting point for the application's methodology.
 
-\subsubsection{Design system planning}
+shadcn/ui is a collection of beautifully designed reusable UI components for web applications. They have a very minimal style and color selection because the creator made them to be customized by the developers. However, these components look good in reality by default, and most small applications and MVPs do not require an extraordinary design; the developers started using them as they are, and others kept following them until they became viral in 2024. Figure\ref{fig:shadcn} shows some of these components.
 
-\subsection{Architecture Planning}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/shadcn-example.png}
+    \caption{shadcn/ui components example, Source: https://ui.shadcn.com/examples/cards}
+    \label{fig:shadcn}
+\end{figure}
+
+An alternative approach could have been Google's Material Design\footnote{https://m3.material.io/}, another popular option. It is used in almost every Google product and supports various frameworks, including Android applications. It is battle-tested because its first version was released 10 years ago and underwent significant redesigns, but it always stayed well-welcomed. Figure\ref{fig:material3} shows an example of their current version (Material 3). While they are designed well, and their components look consistent across different platforms, they are not easily customized and used outside the supported frameworks.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/material3.png}
+    \caption{Material 3 design for Android applications, Source: https://m3.material.io}
+    \label{fig:material3}
+\end{figure}
+
+\subsubsection{User experience principles and goals}
+
+\subsection{Architecture planning}
 
 \subsubsection{Selected frontend architecture pattern and rationale}
-        
-I adopted a server-side-driven architecture using HTMX and Go for the application. It is a Multi-Page Architecture (MPA) at the core but leverages the framework's SPA-like capabilities. The architectural pattern consists of server-side HTML generation, HTMX enhancement, and the component structure.
-
-The server generates the pages dynamically using the templating engine called templ. The dynamic content is served through partial HTML updates with HTMX requests. This way, the server controls the UI state instead of the client. The approach has several benefits: it decreases the initial site load and simplifies state management because the client receives the complete page containing the client state.
-
-The HTMX library provides the interactions with its AJAX request boosting feature. Applications using the framework can act like single-page applications because the in-place content updates could replace full-page reloads. The approach offers progressive enhancement by not requiring rewriting everything initially and reduces writing additional JavaScript even to zero lines.
-
-The UI is organized into reusable components. They are written in Go using templ.
 
 \subsubsection{Component hierarchy planning}
 
-\subsubsection{}
+\subsubsection{Routing and navigation structure}
+
+\subsection{User interface specifications}
+
+\subsubsection{Design mockups}
+
+\subsubsection{User flow diagrams}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-main.png}
+    \caption{Main navigation flow diagram}
+    \label{fig:flow-main}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-authentication.png}
+    \caption{Authentication flow diagram}
+    \label{fig:flow-authentication}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-quiz-creation-and-edit.png}
+    \caption{Quiz creation and edit flow diagram}
+    \label{fig:flow-quiz-creation-and-edit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-taking-quiz.png}
+    \caption{Taking quiz flow diagram}
+    \label{fig:flow-taking-quiz}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-review-item.png}
+    \caption{Review items flow diagram}
+    \label{fig:flow-review-item}
+\end{figure}
+
+\subsubsection{Interface components specification}
+
+TODO interface components specification: button, input, navigation bar
 
 \section{Backend Design}
 
