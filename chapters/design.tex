@@ -174,7 +174,7 @@ A reasonable indexing strategy can boost a database's performance, accelerating 
 
 System integrity is one of the most critical requirements, if not the most vital. Proper settings and rules can enforce it. To keep the database consistent, we used these additional constraints: ON DELETE CASCASE, UNIQUE, and CHECK. The first one ensures that when a record is deleted, all the records in other tables referring to it are also deleted. The UNIQUE was used to avoid inserting a record already in the table again. Finally, the CHECK was used in the ANSWER\_SCORES and REVIEW\_ITEMS tables to prevent multiple questions from being linked to them. Listing \ref{lst:db-check-constraint} shows an example using the CHECK constraint on the ANSWER\_SCORES table.
 
-\begin{lstlisting}[caption=Using CHECK constraint,label=lst:db-check-constraint, float]
+\begin{lstlisting}[caption=Using CHECK constraint,label=lst:db-check-constraint]
 CREATE TABLE IF NOT EXISTS answer_scores(
     id UUID PRIMARY KEY NOT NULL,
     quiz_result_id UUID REFERENCES quiz_results(id) ON DELETE CASCADE NOT NULL,
@@ -192,11 +192,12 @@ CREATE TABLE IF NOT EXISTS answer_scores(
 \end{lstlisting}
 
 \section{Frontend Design}
-TODO
+
+Designing an application's front end is as important as planning the other parts because this is what the user sees and uses. To make the user like the platform, we must create a good-looking and good-working frontend application. This section outlines how the design is created, how the components are structured, and the most important goals when I designed the platform's interface.
 
 \subsection{User Interface design principles}
 
-\subsubsection{Chosen design metolodogy}
+\subsubsection{Chosen design methodology}
 
 The frontend design methodology follows a minimalist, modern approach similar to shadcn/ui\footnote{https://ui.shadcn.com/}, a UI component collection popularized by Vercel\footnote{https://vercel.com/} made for React and other web frameworks. The application does not use these components and styles because HTMX is not supported directly. Still, their source code is publicly available, and these components are made to copy-paste and customize later. It served as a good starting point for the application's methodology.
 
@@ -209,7 +210,7 @@ shadcn/ui is a collection of beautifully designed reusable UI components for web
     \label{fig:shadcn}
 \end{figure}
 
-An alternative approach could have been Google's Material Design\footnote{https://m3.material.io/}, another popular option. It is used in almost every Google product and supports various frameworks, including Android applications. It is battle-tested because its first version was released 10 years ago and underwent significant redesigns, but it always stayed well-welcomed. Figure\ref{fig:material3} shows an example of their current version (Material 3). While they are designed well, and their components look consistent across different platforms, they are not easily customized and used outside the supported frameworks.
+An alternative approach could have been Google's Material Design\footnote{https://m3.material.io/}, another popular option. It is used in almost every Google product and supports various frameworks, including Android applications. It is battle-tested because its first version was released 10 years ago and underwent significant redesigns, but it always stayed well-welcomed. Figure \ref{fig:material3} shows an example of their current version (Material 3). While they are designed well, and their components look consistent across different platforms, they are not easily customized and used outside the supported frameworks.
 
 \begin{figure}[H]
     \centering
@@ -220,19 +221,145 @@ An alternative approach could have been Google's Material Design\footnote{https:
 
 \subsubsection{User experience principles and goals}
 
+To create an enjoyable user experience, we must consider some user experience (UX) principles, as outlined in \cite{cooper2014face}. Users are diverse, with a wide range of needs and backgrounds, but we must design interfaces that suit most users. This involves adopting design practices prioritizing clarity, accessibility, responsiveness, and intuitiveness. The following principles and goals guided the development of the frontend application:
+
+\begin{itemize}
+\item \textbf{Clarity and simplicity}: The application's interface should communicate clearly and avoid unnecessary complexity.
+\item \textbf{Accessibility}: The application should be inclusive for the broadest range of users. This means the design should consider alternative navigation options, support screen readers, and use appropriate contrast. For the platform, I did not have enough time to focus on this, but the keyboard can use some of the features, and the colors comply with contrast requirements as they are from the tailwindCSS's color palette. In the future, this is an aspect for the platform point to improve and an excellent opportunity to reach more users.
+\item \textbf{Consistency}: Consistency ensures a seamless experience across the application, encompassing the design, behavior, color schemes, and typography of its elements. In my personal opinion, consistency is one of the most fundamental aspects of software design, influencing not only the application's look and feel but also its underlying code and architecture.
+\item \textbf{Feedback}: The user should see feedback immediately after the interaction. This ensures the user is informed about the performed action and helps the user understand what is happening. This can be achieved by adding an interactive state for the elements on hover or click, showing loading indicators, and showing success or error messages with the performed action.
+\end{itemize}
+
+\subsubsection{Technology stack selection}
+
+I chose a technology stack that supports the described design methodology and gives a breath of fresh air by using something other than well-established web frameworks. That is why I created the platform using HTMX and Go. For styling the platform, I used tailwindcss \footnote{https://tailwindcss.com/}, a utility-first CSS library instead of plain CSS. It supports rapid prototyping and development and features a versatile pre-defined color palette perfect for websites with a modern minimalist design.
+
+HTMX is a lightweight JavaScript library that enables declarative HTTP requests via HTML attributes, inserting HTML fragments from the response directly into the DOM. This extension of HTML functionality provides interactivity comparable to modern client-side frameworks. HTMX runs on the user's browser, while the server can use any technology compatible with the HTTP protocol. Table \ref{tab:htmx-vs-others} summarizes the difference between HTMX and traditional SPA frameworks.
+
+\begin{table}[H]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{|l|c|c|} \hline
+        \textbf{Characteristic} & \textbf{HTMX} & \textbf{traditional SPA frameworks} \\ \hline
+        Rendering approach & Server-side rendering & Client-side rendering \\ \hline
+        Supported technologies & Any HTTP protocol compatibly technology & JavaScript and TypeScript \\ \hline
+        State management complexity & Lower & Higher \\ \hline
+        Client-side JavaScript code complexity & Low or even zero & Higher \\ \hline
+        Performance & Lighter and faster initial loads & Heavier initial load \\ \hline
+        Tooling & Lack of tools & Extensive set of supported tools \\ \hline
+        Use case & Content-driven sites with minimal interactions & Complex, state-heavy application  \\ \hline
+    \end{tabular}%
+    }
+    \caption{HTMX vs. traditional SPA frameworks}
+    \label{tab:htmx-vs-others}
+\end{table}
+
 \subsection{Architecture planning}
 
 \subsubsection{Selected frontend architecture pattern and rationale}
 
+For the frontend application, I opted for a component-based architecture. This approach involves breaking down the user interface into smaller, reusable components, like other modern web frameworks, such as React. "The breaking down of a user interface into smaller, self-contained components allows for modularity and reusability across codebases. Through this approach, one gets easier maintenance and scalability for an application, along with better separation of concerns, thereby allowing teams to work more effectively in parallel."\cite{Kothapalli2021ComponentBased}. I used a combination of HTMX, templ, and tailwindCSS to implement this architecture. This approach offers several advantages I think are important for the platform:
+
+\begin{itemize}
+\item \textbf{Modularity}: The components are self-contained units of functionality, making it easier to develop and maintain smaller application pieces.
+\item \textbf{Reusability}: Components can be reused in different application parts, reducing redundant code.
+\item \textbf{Scalability}: Adding more components to the application has minimal impact on the overall performance.
+\item \textbf{Parallel development}: Different teams can work on the components simultaneously.
+\item \textbf{Improved testing}: These components can be tested independently, making the application more robust.
+\end{itemize}
+
 \subsubsection{Component hierarchy planning}
 
+To implement this architecture, I established a hierarchical structure of components. This hierarchy also helps manage and organize the application code. These components can be categorized into top, mid, and low.
+
+As their names suggest, the top-level components are the most important ones. They create an essential layout structure of the pages and contain the lower-level ones. These are the following:
+
+\begin{itemize}
+\item \textbf{HTML layout}: This component is a root HTML document holding the HTML head and body. This component includes the required metadata and scripts to work the application. It also serves as a container for the pages and popups.
+\item \textbf{Authenticated layout}: It is a container layout for pages available after authentication. It also contains a sidebar responsible for navigation between pages and quizzes.
+\item \textbf{Navbar}: Navbar is a navigation helper component for the pages available before authentication.
+\item \textbf{Sidebar}: Sidebar is also a navigation helper component for accessible pages for authenticated users. They offer similar functionality but are placed differently to separate the look and feel of the landing page and the application.
+\end{itemize}
+
+Figure \ref{fig:top-level-components} shows an example structure using them.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/top-level-components.png}
+    \caption{Top-level component}
+    \label{fig:top-level-components}
+\end{figure}
+
+Mid-level components are also fundamental components for the whole. They usually correspond to a specific function that is used in multiple parts of the application. They are built and heavily rely on low-level components. These are a few of them: 
+
+\begin{itemize}
+\item \textbf{Quiz card}: On "My quizzes" page, there is a list of Quiz cards. Each quiz card has a short title and buttons for editing, deleting, and taking the related quiz.
+\item \textbf{Learning list popup}: The learning list popup is available from the "My Quizzes" page to show. It helps manage the users which quiz they want to learn with the platform. It consists of a list of available quizzes and added quizzes to the learning list.
+\item \textbf{Question}: Each question type has a Question component. These components have different modes with a similar look but extended behavior because they are used for editing and taking quizzes or reviewing their result.
+\item \textbf{Review item}: Review item is a component used in the "Learn" page of the platform for listing the questions scheduled for review. A table row element displays questions, difficulty, review dates, and scores. It is built of smaller components such as text and buttons. Figure \ref{fig:review-item-component} shows an example of a review item in the table.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/review-item-component.png}
+    \caption{Review item component}
+    \label{fig:review-item-component}
+\end{figure}
+
+Low-level components are everywhere in the application, as they are the essential building blocks for other components. They consist of styles of text, different kinds of input fields, buttons, and other interactive elements. They are primarily wrappers over basic HTML DOM elements with customizable styles and extended functionalities. Figure \ref{fig:low-level-component} shows an example of a styled text input field with a validation error.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/low-level-component.png}
+    \caption{Low-level component: Text field containing a validation error.}
+    \label{fig:low-level-component}
+\end{figure}
+
 \subsubsection{Routing and navigation structure}
+
+The application's routing is simple and self-describing. All the pages are available directly through in-app navigation or URLs. The naming convention follows a hierarchical structure using a / and page name and optional identifiers, e.g.,/my-quizzes, /quizzes/:quizId/take. Some pages, such as the landing page and, of course, the authentication-related pages, can be accessed without authentication. The user must have an account and be logged in for the others to visit. Table \ref{tab:navigation-and-routes} lists some of the most important routes for pages.
+
+\begin{table}[H]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{|c|>{\centering\arraybackslash}m{3cm}|>{\raggedright\arraybackslash}p{6cm}|p{6cm}|} \hline
+       \textbf{Page name} & \textbf{Authentication needed} & \textbf{URL} & \textbf{Description} \\ \hline
+        Index & No & / & The landing page of the application. \\ \hline
+        Login & No & /login & The user can log in to the application on this page. \\ \hline
+        Sign up & No & /signup & The user can create an account on this page. \\ \hline
+        My quizzes & Yes & /my-quizzes & The main page for authenticated users listing their quizzes. \\ \hline
+        History & Yes & /quiz-history & This page lists the results of the submitted quizzes. \\ \hline
+        Learn & Yes & /learn & This is the main page for learning using the spaced repetition feature of the platform. \\ \hline
+        Start quiz session & Yes & /quizzes/:quizId/take & Calling the URL starts a quiz session and redirects the user to the quiz-taking page. \\ \hline
+        Take quiz page & Yes & /quizzes/:quizId/session/:sessionID & Quiz-taking page. \\ \hline
+        Create quiz page & Yes & /create-new-quiz & New quiz creation page. \\ \hline
+        Quiz edit page & Yes & /quizzes/:id/edit & Page for editing the quiz and modifying its questions. \\ \hline
+    \end{tabular}%
+    }
+    \caption{Navigation and routes}
+    \label{tab:navigation-and-routes}
+\end{table}
 
 \subsection{User interface specifications}
 
 \subsubsection{Design mockups}
 
+A good design can be a good starting point before implementing an application. For larger-scale projects with dedicated designers, a design starts from wireframes, which, after some iterations, become mockups and semi-functioning prototypes. As a two-person team without professional designers, we skipped the wireframe phase and started with mockups. As I was familiar with a popular design tool called Figma \footnote{https://www.figma.com}, I designed components and pages for the application. Figure \ref{fig:quiz-creation-page-initial-design} shows the initial design for the quiz creation page made with Figma.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/quiz-creation-page-initial-design.png}
+    \caption{Initial design of the creation page}
+    \label{fig:quiz-creation-page-initial-design}
+\end{figure}
+
+I used the mockups as a starting point for the design because tailwindCSS allows fast prototyping. It turned out that implementing a not fully detailed design and changing the implementation is more rapid for me than creating a perfect design and implementing it later. It also allowed us to try out the concept in practice, thus preventing unnecessary iterations.
+
 \subsubsection{User flow diagrams}
+
+This subsection outlines the basic actions and navigations available through descriptions and diagrams. I have broken down the diagrams into smaller sections to make them easier to understand. 
+
+The application's starting point for authenticated users is the "My Quizzes page." After the login flow, the user can access some features directly or go to a different page. These functions and pages are described visually in this diagram \ref{fig:flow-main}.
 
 \begin{figure}[H]
     \centering
@@ -241,12 +368,16 @@ An alternative approach could have been Google's Material Design\footnote{https:
     \label{fig:flow-main}
 \end{figure}
 
+When the user first accesses the platform, it goes to the landing page. The login and sign-up pages are available without authentication, but the user must fill out the login form or create an account to access the others. From the user's perspective, this authentication flow is shown in Figure \ref{fig:flow-authentication}.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-authentication.png}
+    \includegraphics[width=0.6\textwidth, keepaspectratio]{figures/flow-authentication.png}
     \caption{Authentication flow diagram}
     \label{fig:flow-authentication}
 \end{figure}
+
+The process of creating and editing a quiz is mostly identical. This flow is shown in figure \ref{fig:flow-quiz-creation-and-edit}. The user can set the quiz title and description or provide a context for question generation. After that, the user can select a question type: single choice, multiple choice, or boolean, and the platform generates and shows the question using the context. Adding more questions or deleting already added ones are also available through this flow on this page.
 
 \begin{figure}[H]
     \centering
@@ -255,12 +386,16 @@ An alternative approach could have been Google's Material Design\footnote{https:
     \label{fig:flow-quiz-creation-and-edit}
 \end{figure}
 
+When a user selects a quiz, the platform offers options to start taking it or continue an already-started but not finished one. When the user decides to start, a session is created, and the answers are saved automatically for this session. It stays open until the user does not submit their answer or starts a new session. After closing, the user is redirected to the results, which can be viewed from the Quiz history page. This quiz-taking flow is also displayed in Figure \ref{fig:flow-taking-quiz}.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-taking-quiz.png}
     \caption{Taking quiz flow diagram}
     \label{fig:flow-taking-quiz}
 \end{figure}
+
+Reviewing questions is the core concept of spaced repetition. The users can manage which quizzes they want to learn, and the platform schedules them. The user can see and filter the questions scheduled for review on the Review page. It lists all the questions and adds options for the user to review. This review can be done one by one or simultaneously in the order specified by the platform. When the review is done, the platform schedules the questions for the following review and redirects the user to the learn page. Figure \ref{fig:flow-review-item} displays this question reviewing flow.
 
 \begin{figure}[H]
     \centering
