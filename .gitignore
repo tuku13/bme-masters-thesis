@@ -5,3 +5,6 @@
 *.pdf
 *.toc
 .idea
+*.bbl
+*.blg
+*.out
