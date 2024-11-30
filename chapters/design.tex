@@ -340,9 +340,9 @@ The application's routing is simple and self-describing. All the pages are avail
     \label{tab:navigation-and-routes}
 \end{table}
 
-\subsection{User interface specifications}
+\subsection{Frontend design and user flow}
 
-\subsubsection{Design mockups}
+\subsubsection{Frontend design}
 
 A good design can be a good starting point before implementing an application. For larger-scale projects with dedicated designers, a design starts from wireframes, which, after some iterations, become mockups and semi-functioning prototypes. As a two-person team without professional designers, we skipped the wireframe phase and started with mockups. As I was familiar with a popular design tool called Figma \footnote{https://www.figma.com}, I designed components and pages for the application. Figure \ref{fig:quiz-creation-page-initial-design} shows the initial design for the quiz creation page made with Figma.
 
@@ -404,10 +404,226 @@ Reviewing questions is the core concept of spaced repetition. The users can mana
     \label{fig:flow-review-item}
 \end{figure}
 
-\subsubsection{Interface components specification}
-
-TODO interface components specification: button, input, navigation bar
-
 \section{Backend Design}
+
+The backend service is a monolith-styled service written in Go using the Echo web framework. It is a traditional API server that accesses the platform's functionalities. It is responsible for input validation, business logic, and data access and integrates external services like the question generator LLM. Overall, it is the core of the platform that acts as a glue service. This section outlines the backend service's architecture at a higher level, presents the main business logic and patterns used, and covers security.
+
+\subsection{High-level architecture}
+
+This service uses a generic three-layered architecture (presentation, business, and data access layers) but does not follow a specific architectural pattern like MVC. Figure~\ref{fig:backend-architecture} shows these layers and their relations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/backend-architecture.png}
+    \caption{Review items flow diagram}
+    \label{fig:backend-architecture}
+\end{figure}
+
+The presentation layer handles the requests from the client-server and creates the JSON responses. This thin layer on top of the architecture ensures access to outside services. It is also responsible for validating and sanitizing user input. The authentication and error handling middleware are lying in this layer.
+
+The business logic layer contains almost everything for the platform. All the features are found here. It is between the presentation and data access layers (DAL). Components from this layer process the validated requests, retrieve data from external sources relying on the DAL, and do the platform's business logic. By separating the functions logically, these components can be named User management, Quizzes, Questions, Quiz sessions, Learning list, and Spaced repetition.
+
+The data access layer is a thin layer that abstracts data retrieved from different sources. The platform gets data from the database through the two SQL libraries (SQLx and SQLc) and the AI service through its REST interface by HTTP request. It is responsible for parsing and mapping the data into a processable format for the upper layers.
+
+\subsection{API design}
+
+The API design follows a traditional REST approach using JSON requests and responses. This design respects the different HTTP methods used for their purposes. The endpoints do not use any versioning system because this is the first version of the service and has yet to undergo any significant redesign. Later, introducing versioning can be beneficial, but it is not necessary now.
+
+\subsubsection{API Categories}
+
+API endpoints are categorized into two leading groups: those available for the user without authentication and those that require authentication. The unauthenticated endpoints are only for signing up for a new user account or logging into an existing account. The other group is categorized into a few smaller categories based on functionality, mostly corresponding to components in the business logic layer.
+
+\textbf{Quizzes} The endpoints in this category relate to managing quizzes. This endpoint allows for creating new quizzes and modifying or deleting existing ones.
+
+\textbf{Questions} The question-related endpoints are for generating questions with the AI services using the given user context. These are also for managing the questions linked to quizzes.
+
+\textbf{Quiz sessions} The quiz session endpoints are for creating a session when the user decides to take a quiz and storing the answers. It also closes the sessions when needed and manages the quiz results.
+
+\textbf{Learning list} These endpoints allow the user to add quizzes to its learning list or remove them from it. They also trigger scheduling when a user adds a new quiz to its list.
+
+\textbf{Review items} These are the endpoints for listing the scheduled questions to review by the spaced repetition algorithm. They handle the review process by offering the questions and calculating the upcoming schedules.
+
+\subsubsection{Request and response patterns}
+
+The backend service communicates with the backend with standard HTTP messages. While the clients expect the data to be in from-data format or url-encoded-form-data, it does it in JSON. Figure \ref{lst:http-request-and-response} shows an example request and its response processed by the server in HTTP format.
+
+\begin{lstlisting}[caption=HTTP request and response for authentication,label=lst:http-request-and-response]
+---- Authentication request:
+
+POST /authenticate-user HTTP/1.1
+Host: localhost:9000
+Content-Type: application/json
+Content-Length: 68
+
+{ "email": "john.doe@email.com", "password": "password123" }
+
+---- Authentication response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Set-Cookie: session=93f4b04b-9df0-49c2-8c04-794ffdb63526; Expires=Sat, 30 Nov 2024 17:25:37 GMT; HttpOnly
+Date: Sat, 30 Nov 2024 16:26:37 GMT
+Content-Length: 93
+
+{"id":"7c9ea74d-6078-4338-b5ee-7a788f8a57ca","name":"John Doe","email":"john.doe@email.com"}
+\end{lstlisting}
+
+\subsubsection{Error-handling patterns}
+
+The Go language has an explicit error-handling mechanism; it forces the developer to handle the error. When a developer follows these rules correctly, a nice structure of error messages can be built. This message is usually good for logging and informing the caller what problem happened during the request's serving. Also, Echo supports wrapping the Go errors into HTTP error messages with error codes, which can be a convenient and consistent form of error handling. Listing~\ref{lst:error-handling-pattern} shows an example of calling a service; when it runs on an error, use its message as a response.
+
+\begin{lstlisting}[caption=Error handling using Go errors,label=lst:error-handling-pattern]
+// Calculate score for the given review item
+score, err := calculateReviewItemScore(reviewItem, answers)
+if err != nil {
+    return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("calculating score for review item with ID %q: %w\n", reviewItemID, err))
+}
+\end{lstlisting}
+
+\subsubsection{Endpoint overview}
+
+The following tables list the application's endpoints grouped by categories.
+
+% auth
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        /authenticate-user & POST & Authenticate the user \\
+        /authenticated & GET & Check authentication \\
+        /create-user & POST & Create a user \\
+        /delete-user/:id & DELETE & Delete a user \\
+        /logout & POST & Logout the user \\
+        \hline
+    \end{tabular}
+    \caption{Auth endpoint overview}
+    \label{tab:auth-endpoints}
+\end{table}
+
+% quizzes
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        /quizzes/:id & GET & Get a quiz \\
+        /quizzes/:id & PATCH & Update a quiz \\
+        /quizzes/:id & DELETE & Delete a quiz \\
+        /quizzes/user/:id & GET & Get the user's quizzes \\
+        /quizzes/create & POST & Create a quiz \\
+        \hline
+    \end{tabular}
+    \caption{Quiz endpoint overview}
+    \label{tab:quiz-endpoints}
+\end{table}
+
+% question
+\begin{table}[H]
+    \begin{tabular}{|c|p{5cm}|l|p{5.5cm}|}
+        \hline
+        \textbf{Category} & \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        Single choice & /questions/single-choice & POST & Generate a single choice question \\
+        & /questions/single-choice/:id & GET & Get a single choice question \\
+        & /questions/single-choice/:id & PATCH & Update a single choice question \\
+        & /questions/single-choice/:quizId/:id & DELETE & Delete a single choice question \\
+        \hline
+        Multiple choice & /questions/multiple-choice & POST & Generate a multiple choice question \\
+        & /questions/multiple-choice/:id & GET & Get a multiple choice question \\
+        & /questions/multiple-choice/:id & PATCH & Update a multiple choice question \\
+        & /questions/multiple-choice/:quizId/:id & DELETE & Delete a multiple choice question \\
+        \hline
+        Boolean & /questions/true-or-false & POST & Generate a boolean choice question \\
+        & /questions/true-or-false/:id & GET & Get a boolean choice question \\
+        & /questions/true-or-false/:id & PATCH & Update a boolean choice question \\
+        & /questions/true-or-false/:quizId/:id & DELETE & Delete a boolean choice question \\
+        \hline
+    \end{tabular}
+    \caption{Question endpoint overview}
+    \label{tab:question-endpoints}
+\end{table}
+
+% quiz sessions
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        /quiz-sessions/:quizSessionId & GET & Get a quiz session \\
+        /quiz-sessions/ & GET & Get quiz sessions \\
+        /quiz-sessions/has-open & GET & Check has an open quiz session \\
+        /quiz-sessions/start & POST & Start a quiz session \\
+        /quiz-sessions/:quizSessionId/submit & POST & Submit quiz and finish its session \\
+        /quiz-sessions/:quizSessionId/result & GET & Get quiz result \\
+        /quiz-sessions/:quizSessionId/answers & GET & Get quiz session answers \\
+        /quiz-sessions/:quizSessionId/answers & PUT & Update a quiz session answer \\
+        \hline
+    \end{tabular}
+    \caption{Quiz session endpoint overview}
+    \label{tab:quiz-session-endpoints}
+\end{table}
+
+% quiz history and learn list
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        /quiz-history & GET & Get quiz history entries \\
+        /learn-list & GET & Get learning list \\
+        /learn-list/:quizID/add & POST & Add quiz to learning list \\
+        /learn-list/:quizID/remove & POST & Remove quiz from learning list \\
+        \hline
+    \end{tabular}
+    \caption{Quiz history endpoint overview}
+    \label{tab:quiz-history-endpoints}
+\end{table}
+
+% review items
+\begin{table}[H]
+    \begin{tabular}{|l|l|p{5.5cm}|}
+        \hline
+        \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        /review-items & GET & Get review items \\
+        /review-items/quiz-options & GET & Get quiz options \\
+        /review-items/item-counts & GET & Count scheduled and unscheduled questions \\
+        /review-items/get-question/:reviewItemID & GET & Get review item question \\
+        /review-items/get-question & GET & Get question \\
+        /review-items/:reviewItemID/submit & POST & Submit review item question \\
+        \hline
+    \end{tabular}
+    \caption{Review item endpoint overview}
+    \label{tab:review-items-endpoints}
+\end{table}
+
+\subsection{Security}
+
+Security is one of an application's critical aspects. Nowadays, these security features in software not only protect users and platform assets but are also part of the user experience. Without them, no application would exist. Achieving properly secure applications is not easy and is more than just a one-off task because it requires periodic review.
+
+\subsubsection{Authentication}
+
+Authentication is the process of identifying the user who has accessed software. There are several ways to do it:
+
+\begin{itemize}
+    \item \textbf{User credential-based authentication}: This authenticates the user through identifiers and pre-shared secrets such as passwords. This way is not recommended today because it requires repeatedly sharing the secret, making it easier to eavesdrop.
+    \item \textbf{Session-based authentication}: In this way, a session is created on the server after authentication with credentials. A session ID is also issued by the server for the user for later authentications. This session stores the state on the server and, usually, has an expiry and can be explicitly destroyed if necessary.
+    \item \textbf{Token-based authentication}: Token-based authentication is similar to session-based authentication, but in this case, the state is stored in a token on the client. The server issues and signs these tokens after successful user authentication. The client sends the token to the server for authentication and authorization purposes. One of its downfalls is that it is hard to invalidate these tokens, requiring complex token management solutions.
+    \item \textbf{Other forms}: There are numerous more ways to do it, like OAuth (with many extensions), but for the platform, We chose a more uncomplicated solution, so I  do not detail them now.
+\end{itemize}
+
+We chose a session cookie-based form for the platform, which felt simple yet powerful for our use case. Session-based solutions suit us better for the monolith architecture because the state can be stored in a single server and does not have to be synchronized by other instances. The server issues the session token as HTTP cookies and sends it to the client after the user completes the login flow. The authentication-requiring endpoints check that this cookie exists and is valid before continuing to process the requests. Figure \ref{fig:authentication-sequence} shows the login flow with session cookies.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/authentication-sequence.png}
+    \caption{Login flow with session cookies}
+    \label{fig:authentication-sequence}
+\end{figure}
+
+\subsubsection{Input validation and sanitization}
+
+\subsubsection{SQL injection prevention}
 
 \section{AI integration Design}
