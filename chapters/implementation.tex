@@ -336,4 +336,47 @@ The library generates a \texttt{db.Quieries} object containing the generated fun
 
 \subsection{Spaced repetition algorithm}
 
+The spaced repetition learning algorithm schedules the user's learning materials. It uses historical data gathered and stored in question-answering. When a user adds a quiz to its learning list, the platform finds the questions from the quiz and creates an immediate schedule with default values. It makes available the platform to check the user's answers and reschedule the questions based on the concrete answers.
+
+The algorithm's implementation is straightforward; it consists of one function and a few lines of code. The functions take a review item and a score percentage as parameters and return the review item with the scheduled values. The review item represents a card used in the spaced repetition, and the score percentage is the score they got for the given question. The algorithm scales up the score between 1 and 5 for later calculations. Then, the score is higher than 3, meaning the user answered correctly with difficulties, or below it, meaning the answer needs to be corrected. Then, the algorithm calculates the difficulty, the ease factor, and the new schedule for the question. Finally, it stores the modified item and shows it to the user. Listing~\ref{lst:spaced-repetition} shows the concrete implementation of the algorithm written in Go.
+
+\begin{lstlisting}[caption=Spaced repetition algorithm written in Go,label=lst:spaced-repetition]
+func applySpacedRepetitionAndStore(ctx context.Context, reviewItem *models.ReviewItem, percentage float64) (*models.ReviewItem, error) {
+	// score is the user's performance rating, where:
+	// 5 = perfect recall, 4 = correct with minor hesitation, 3 = correct but difficult,
+	// 2 = incorrect, but partially remembered, 1 = completely incorrect
+	score := 5 * percentage
+
+	if score >= 3 {
+		reviewItem.Difficulty = math.Max(1, reviewItem.Difficulty-1)
+
+		if reviewItem.Streak == 0 {
+			reviewItem.IntervalInMinutes = 60
+		} else if reviewItem.Streak == 1 {
+			reviewItem.IntervalInMinutes = 3 * 60
+		} else {
+			reviewItem.IntervalInMinutes = int32(float64(reviewItem.IntervalInMinutes) * reviewItem.EaseFactor * (1 / reviewItem.Difficulty))
+		}
+
+		reviewItem.EaseFactor = reviewItem.EaseFactor + (0.1 - (5-score)*0.08)
+		reviewItem.Streak = reviewItem.Streak + 1
+	} else {
+		reviewItem.Difficulty = math.Min(5, reviewItem.Difficulty+1.5)
+
+		reviewItem.IntervalInMinutes = 60
+
+		reviewItem.EaseFactor = math.Max(1.3, reviewItem.EaseFactor-0.2)
+		reviewItem.Streak = 0
+	}
+
+	reviewItem.NextReviewDate = models.NullableTime{
+		Time: reviewItem.NextReviewDate.Time.Add(time.Duration(reviewItem.IntervalInMinutes) * time.Minute),
+	}
+
+	// store the data ...
+
+	return reviewItem, nil
+}
+\end{lstlisting}
+
 \subsection{AI integration}
