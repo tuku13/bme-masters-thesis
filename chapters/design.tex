@@ -624,7 +624,7 @@ We chose a session cookie-based form for the platform, which felt simple yet pow
 
 \subsubsection{Input validation and sanitization}
 
-Input validation is a method of checking the incoming data for the proper format, allowable values, and meeting the given constraints. It is a pillar of security. Frameworks usually can check the general properties of a request, such as whether the input is expected in JSON format, which is JSON and has the desired fields. Enforcing more specific rules, such as user name requirements, that vary based on the business logic and specific use cases may require manual or automatic checks performed with specialized libraries and functions.
+Input validation is a method of checking the incoming data for the proper format and allowable values and meeting the given constraints. It is a pillar of security. Frameworks usually can check the general properties of a request, such as whether the input is expected in JSON format, which is JSON and has the desired fields. Enforcing more specific rules, such as user name requirements, that vary based on the business logic and specific use cases may require manual or automatic checks performed with specialized libraries and functions.
 
 The presentation layer, specifically the API handlers, is responsible for validation and sanitization in the platform. The framework and Go standard library help verify the JSON format and URL params, and the handler code performs the other checks. These codes follow the practice of returning an error immediately when a validation fails. This practice prevents the continuing execution of forbidden business logic while keeping the state consistent. Listing~\ref{lst:validation-example} shows an example of validations performed on a quiz session submission.
 
@@ -650,5 +650,7 @@ The presentation layer, specifically the API handlers, is responsible for valida
 \end{lstlisting}
 
 \subsubsection{SQL injection prevention}
+
+SQL injection is a code injection technique that aims to access and modify unauthorized database data with carefully crafted queries. During this attack, the attacker tries to guess the SQL queries used by the application and then modify them through improperly validated inputs. Preventing this kind of attack is complicated due to the endless possibilities of inputs. Usually, the SQL libraries and Object Relational Mapping (ORM) software help the developers defend against it. The two SQL libraries I used do it differently; SQLx offers solutions for creating prepared statements, while SQLc generates code containing prepared statements.
 
 \section{AI integration Design}
