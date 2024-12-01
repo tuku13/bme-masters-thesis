@@ -380,3 +380,9 @@ func applySpacedRepetitionAndStore(ctx context.Context, reviewItem *models.Revie
 \end{lstlisting}
 
 \subsection{AI integration}
+
+The AI features are found in different services but are available from the backend. They generate questions of a given type from the user-provided context. This context is usually several paragraphs long, so the server needs to split it into smaller parts. It not only speeds up the generation but also makes it more controllable. Máté made a simple algorithm for splitting up the context and iterating between the parts with a round-robin algorithm.
+
+When a user submits long text as a question context, the server calculates a hash for later identification and splits it recursively into 2-3 paragraph chunks. For the first time, the first chunk and the question type are sent to the LLM API, which takes care of the generation. Next time, the server will check the hash and find the next chunk for the generation. These chunks are stored in the database and cached in memory to optimize retrieval speed.
+
+The questions return from the LLM API as JSON objects in HTTP responses. The generation usually takes several seconds to finish; until then, the server and client have to wait. As I wrote this thesis, Máté and I started considering implementing HTTP streams besides the current method, allowing the client to show partially generated questions. This concept is more complicated than the implemented one and would need changes in every layer. It idea could be an excellent idea for improving the overall user experience.
