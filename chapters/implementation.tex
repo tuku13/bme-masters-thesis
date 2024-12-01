@@ -70,8 +70,96 @@ The business layer objects are usually mappings from DTOs, with minor changes fo
 
 \subsection{Authentication}
 
+The authentication on the client side is an extension of the server-side version. The user sends the session cookie to the frontend, and the frontend server saves it in the execution context and uses it to fetch data from the backend. A custom context is created from the Echo context on each request by extending it with user-related information and instantiating an ApiService instance. The ApiService automatically attaches the session cookie to the requests before sending them to the backend. Listing~\ref{lst:session-middleware} shows the code of the custom session middleware.
+
+\begin{lstlisting}[caption=Session middleware code,label=lst:session-middleware]
+func SessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cc := &AppContext{
+			Context: c,
+		}
+
+		sessionCookie, err := c.Cookie("session")
+		if err != nil {
+			return next(cc)
+		}
+
+		cc.ApiService = service.NewApiService(sessionCookie)
+		session, err := cc.ApiService.GetSession()
+		if err != nil {
+			return next(cc)
+		}
+
+		cc.Session = session
+		cc.Set("cc", cc)
+		return next(cc)
+	}
+}
+\end{lstlisting}
+
+The custom context creation and session checking are built on the Echo framework middleware feature. I defined a middleware that extends the Echo context and another that checks the extended context to contain the session information. The session creator middleware is placed before every request because it only tries extending the context, but the other one is placed before the execution of the authentication-required endpoint to ensure the user is authenticated. It works like the Angular web framework's Auth guard \footnote{https://angular.dev/api/router/CanActivate} feature. Listing \ref{lst:session-require-middleware} shows the middleware code that ensures the authentication.
+
+\begin{lstlisting}[caption=Session checking middleware code,label=lst:session-require-middleware]
+func RequireSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cc, ok := c.(*AppContext)
+		if !ok || cc.Session == nil {
+			return c.Redirect(http.StatusFound, "/login")
+		}
+		return next(c)
+	}
+}
+\end{lstlisting}
+
 \subsection{Rendering pipeline}
 
+I designed a pipeline-like structure for rendering the components to make them easier to manage and use. The pipeline has three stages: two primary and one optional. These stages have different responsibilities and use cases, but they were a good addition to creating a well-organized render structure. The first stage determines the request type, the second renders the desired component(s), and the final extends the rendered component when necessary. The following figure~\ref{fig:rendering-pipeline} shows the whole rendering process.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth, keepaspectratio]{figures/rendering-pipeline.png}
+	\caption{Rendering pipeline}
+	\label{fig:rendering-pipeline}
+\end{figure}
+
+The main problem was rendering the pages in a unified way for different needs. When a user navigates between pages, the frontend server should only render the page and the modified sidebar and let HTMX insert them into the DOM tree. However, when a user accesses a page directly with the URL, the server has to render a base HTML layout containing the scripts and styles in addition to the page and the sidebar—the pipeline's first stage checks whether the incoming request is a standard AJAX or an HTMX-boosted one.
+
+The central stage of the pipeline is responsible for rendering the pages and components. It doesn't have to know whether a rendered element works as it is or is placed into a structure. This stage also allows additional components to be added, but it has to be done manually based on the use case. A common use case is using the HTMX OOB requests to update different parts of an application.
+
+The final stage is responsible for automatically making post-render modifications. Currently, the only use case for this feature in the application is closing popups on navigation. It is made to be extendable, such as keeping a popup open, and can be set, but it has yet to be used.
+
 \subsection{Form handling}
+
+The HTMX requests contain information in HTTP forms. I used an interesting technique \footnote{https://www.youtube.com/watch?v=bQirFmhS3iw} for rendering and validating these forms in the application. The main idea is adding two parameters to the form components; the first is Go struct representing the values filled by the user, and the second is storing error messages. When a user submits a form, the frontend parses the values into the struct and validates them. If any error occurs or a value is inappropriate, the frontend server attaches error messages with keys to the error map and renders the component using the values and the messages. The following listing~\ref{lst:form-handling} shows the login form component's code and how the values and the error messages are set.
+
+\begin{lstlisting}[caption=Login form,label=lst:form-handling]
+templ LoginForm(errors map[string]string) {
+	<form
+		hx-post="/login"
+		hx-swap="outerHTML"
+		class="flex flex-col gap-y-4 p-6 w-[500px]"
+	>
+		<span class="text-center text-3xl font-bold">Login</span>
+		@components.EMailInput(components.EMailInputProps{
+			Error: errors["email"],
+		})
+		@components.TextInput(components.TextInputProps{
+			Name:        "password",
+			Label:       "Password",
+			Placeholder: "Password",
+			Type:        "password",
+			Error:       errors["password"],
+		})
+		@components.Button(components.ButtonProps{
+			Text: "Submit",
+			Type: "submit",
+		})
+		@components.LinkButton("Sign up", "/signup", components.ButtonColorWhite)
+		if errors["other"] != "" {
+			<span class="w-full py-4 text-red-500 text-nowrap">{ errors["other"] }</span>
+		}
+	</form>
+}
+\end{lstlisting}
 
 \subsection{Backend integration}
