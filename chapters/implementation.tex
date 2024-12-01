@@ -8,6 +8,8 @@ This section presents the completed frontend application, illustrated with pictu
 
 \subsection{The frontend application and screenshots}
 
+TODO
+
 \subsection{Project structure}
 
 The project follows a flat folder structure hierarchy inspired by \texttt{The Go Standard Project Layout}\footnote{https://github.com/golang-standards/project-layout}. Figure \ref{fig:frontend-project-structure} shows this folder structure visually.
@@ -163,3 +165,51 @@ templ LoginForm(errors map[string]string) {
 \end{lstlisting}
 
 \subsection{Backend integration}
+
+The frontend server makes HTTP requests to the backend endpoints using the ApiService from the context. ApiService is a proxy class that abstracts HTTP requests into function calls. It offers a unified and automated way to communicate with the backend. The session middleware constantly creates one instance for the current context containing the session information. The service's responsibility is to attach the session cookie to each request, and it manages by offering a common request sending and parsing function. This function takes the URL, HTTP method name, request, and response objects as parameters, creates a request, attaches the session cookie to the HTTP header, and processes the request. Listing \ref{lst:api-service} shows the code of this util function.
+
+\begin{lstlisting}[caption=ApiService code,label=lst:api-service]
+func (a *ApiService) getResponse(method, path string, requestBody any, responseBody interface{}) error {
+	data, err := json.Marshal(requestBody)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(method, constants.BACKEND_URL+path, bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+
+	if a.sessionCookie != nil {
+		req.AddCookie(a.sessionCookie)
+	}
+
+	resp, err := a.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
+		var result map[string]string
+		err = json.Unmarshal(bodyBytes, &result)
+		if err != nil {
+			return err
+		}
+
+		return errors.New("error message: " + result["message"])
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&responseBody)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+\end{lstlisting}
