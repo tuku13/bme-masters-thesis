@@ -2,6 +2,7 @@
 
 This chapter introduces some interesting implementation details and techniques, focusing mainly on the frontend but also mentioning the backend, including the spaced repetition algorithm.
 
+
 \section{Frontend implementation}
 
 This section presents the completed frontend application, illustrated with pictures, and then describes the solutions used during the implementation, highlighting the exciting features.
@@ -118,10 +119,10 @@ func RequireSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 I designed a pipeline-like structure for rendering the components to make them easier to manage and use. The pipeline has three stages: two primary and one optional. These stages have different responsibilities and use cases, but they were a good addition to creating a well-organized render structure. The first stage determines the request type, the second renders the desired component(s), and the final extends the rendered component when necessary. The following figure~\ref{fig:rendering-pipeline} shows the whole rendering process.
 
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=0.8\textwidth, keepaspectratio]{figures/rendering-pipeline.png}
-	\caption{Rendering pipeline}
-	\label{fig:rendering-pipeline}
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/rendering-pipeline.png}
+    \caption{Rendering pipeline}
+    \label{fig:rendering-pipeline}
 \end{figure}
 
 The main problem was rendering the pages in a unified way for different needs. When a user navigates between pages, the frontend server should only render the page and the modified sidebar and let HTMX insert them into the DOM tree. However, when a user accesses a page directly with the URL, the server has to render a base HTML layout containing the scripts and styles in addition to the page and the sidebar—the pipeline's first stage checks whether the incoming request is a standard AJAX or an HTMX-boosted one.
