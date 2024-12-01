@@ -71,7 +71,7 @@ func (result *QuizResult) MapToBusiness() (*business.QuizResult, error) {
 
 The business layer objects are usually mappings from DTOs, with minor changes for effortless rendering. The DTOs are Go structs with \texttt{struct tags} used for parsing JSON objects. They are mostly the same as used on the backend. The request layer objects are similar to DTOs, but their \texttt{struct tags} help to map form data sent by the client instead of JSON sent by the server.
 
-\subsection{Authentication}
+\subsection{Authentication}\label{subsec:frontend-authentication}
 
 The authentication on the client side is an extension of the server-side version. The user sends the session cookie to the frontend, and the frontend server saves it in the execution context and uses it to fetch data from the backend. A custom context is created from the Echo context on each request by extending it with user-related information and instantiating an ApiService instance. The ApiService automatically attaches the session cookie to the requests before sending them to the backend. Listing~\ref{lst:session-middleware} shows the code of the custom session middleware.
 
@@ -217,6 +217,8 @@ func (a *ApiService) getResponse(method, path string, requestBody any, responseB
 
 \section{Backend implementation}
 
+The backend server is a traditional API server that functions as the platform's core component. It is written in Go using the Echo web framework. This section details the project, how the data is used, and how the authentication, database communication, or the spaced repetition algorithm are implemented. This section focuses on highlighting the exciting and unique details of the implementation.
+
 \subsection{Project structure}
 
 The backend follows a flat folder structure hierarchy similar to the frontend with backend-specific features. This structure is a bit chaotic now, mainly due to using different SQL libraries. It needs some changes, but it is suitable for now. Figure~\ref{fig:backend-project-structure} shows the structure visually. Some parts, for example, config files, are missing from the figure because they are placed into the root, but this figure is about the folders.
@@ -259,6 +261,23 @@ type DBSingleChoiceQuestion struct {
 \end{lstlisting}
 
 \subsection{Authentication}
+
+The platform uses session-based authentication with HTTP cookies. The frontend side of the implementation is discussed earlier in the frontend authentication subsection~\ref{subsec:frontend-authentication}. This subsection focuses on the backend side.
+
+The implementation is straightforward; the service offers the endpoint \texttt{/authenticate-user}, where a user can submit the credentials, and the server creates a session. This session's ID is an HTTP cookie in the response and must be sent back by the client on every request. The session is currently stored in the database in the session table. It is automatically deleted after expiring due to the in-database chron job. Listing~\ref{lst:session-creation} shows the code for creating the session.
+
+\begin{lstlisting}[caption=Session creation code,label=lst:session-creation]
+func CreateSession(userId string) (string, error) {
+	var id string
+	err := utils.DB.Get(&id, "INSERT INTO sessions (id, user_id, valid_until) VALUES (gen_random_uuid(), $1, now() + interval '1 hour') RETURNING id", userId)
+	if err != nil {
+		return "", err
+	}
+	return id, nil
+}
+\end{lstlisting}
+
+The server reads the session cookie and compares it to the value stored in the database to check the session. This check can be done automatically by a session-checking middleware or manually with Go code on the desired endpoints. When the user logs out, the server deletes its session from the database, preventing others from stealing it.
 
 \subsection{SQLc implementation}
 
