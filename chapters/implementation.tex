@@ -281,6 +281,59 @@ The server reads the session cookie and compares it to the value stored in the d
 
 \subsection{SQLc implementation}
 
+SQLc is the library for accessing the database with generated code from schemas and queries. The library generates the code from the given schema and query files using its configuration file. This file helps define the style of the generated code. Listing~\ref{lst:sqlc-config} shows the current config of the SQLc library.
+
+\begin{lstlisting}[caption=SQLc configuration,label=lst:sqlc-config]
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "query.sql"
+    schema: "schema.sql"
+    gen:
+      go:
+        package: "db"
+        out: "db"
+        sql_package: "pgx/v5"
+        emit_result_struct_pointers: true
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "uuid"
+            nullable: false
+            go_type:
+              type: "string"
+              pointer: false
+
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              type: "string"
+              pointer: true
+
+          - db_type: "pg_catalog.float8"
+            nullable: false
+            go_type: "float64"
+
+          - db_type: "pg_catalog.float8"
+            nullable: true
+            go_type: "float64"
+
+\end{lstlisting}
+
+The library generates a \texttt{db.Quieries} object containing the generated function calling prepared statements. This object requires a database connection to work. I created a service called \texttt{SQLCQuerier} to link these to objects. This service is initiated in the main function before everything else and stored as a global object. This object is called everywhere in the application to perform database queries. Every query function requires a go context and query-related parameter struct for the inner prepared statement. The context is used to limit the lifetime of the query execution. It helps prevent infinity loads and memory leaks. The following listing~\ref{lst:sqlc-querier} shows an example of retrieving the SQLCQuerier object and performing a request using it.
+
+\begin{lstlisting}[caption=Using the SQLCQuerier,label=lst:sqlc-querier]
+	// Get the querier and create a Go context with lifetime of 5s
+	sqlcQuerier := utils.GetQuerier()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Get sessions from the database using the querier
+	quizSessions, err := sqlcQuerier.GetQuizSessionsByUserId(ctx, userID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("error getting quiz sessions for user: %w", err))
+	}
+\end{lstlisting}
+
 \subsection{Spaced repetition algorithm}
 
 \subsection{AI integration}
