@@ -214,3 +214,54 @@ func (a *ApiService) getResponse(method, path string, requestBody any, responseB
 	return nil
 }
 \end{lstlisting}
+
+\section{Backend implementation}
+
+\subsection{Project structure}
+
+The backend follows a flat folder structure hierarchy similar to the frontend with backend-specific features. This structure is a bit chaotic now, mainly due to using different SQL libraries. It needs some changes, but it is suitable for now. Figure~\ref{fig:backend-project-structure} shows the structure visually. Some parts, for example, config files, are missing from the figure because they are placed into the root, but this figure is about the folders.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth, keepaspectratio]{figures/backend-project-structure.png}
+	\caption{Backend project structure}
+	\label{fig:backend-project-structure}
+\end{figure}
+
+\textbf{api}: The \texttt{api} folder contains the endpoint handlers and the DTO's. They are separated into two subfolders: \texttt{handlers} and \texttt{models}.
+
+\textbf{auth}: The \texttt{auth} folder stores the authentication-related endpoint handlers, models, and database queries. These functions are placed here. They are implemented using the SQLx library.
+
+\textbf{constants}: The \texttt{constants} folder is the same as in the fronted. It contains run-time constants and wraps environment variables into Go variables.
+
+\textbf{db}: The \texttt{db} folder is a generated folder by SQLc, containing the SQL schemas, queries, and the glue code for accessing the database.
+
+\textbf{question} and \textbf{quiz}: These two folders are for database codes and types used by the SQLx library, containing prepared statements and mapping types.
+
+\textbf{utils}: The \texttt{utils} folder contains shared code for the application. Currently, they are database-related helper functions.
+
+\textbf{tmp}: The \texttt{tmp} folder is a temporary folder containing the application's binary and related log files.
+
+\subsection{Data models}
+
+Unlike the frontend, backend data can be split into two layers: business and Data Access Object (DAO). In the case of the backend, the DTO and the business layer are merged. The business logic is performed on these objects containing the JSON parsing related \texttt{struct tags}. For now, it is sufficient, but I may need to separate them later.
+
+The DAO layer contains the objects the database libraries use to map rows to the Go code. I do not apply them directly but map to their business layer equivalents to perform logic. There are two categories: the ones I wrote in Go for the SQLx library queries and the ones other SQL library generates. Listing~\ref{lst:sqlx-type} shows an example SQLx-compatible type struct declaration.
+
+\begin{lstlisting}[caption=SQLx-compatible type struct declaration,label=lst:sqlx-type]
+type DBSingleChoiceQuestion struct {
+    UUID          string         `db:"uuid"`
+    QuizID        string         `db:"quizid"`
+    Question      string         `db:"question"`
+    Answers       pq.StringArray `db:"answers"`
+    CorrectAnswer string         `db:"correct_answer"`
+}
+\end{lstlisting}
+
+\subsection{Authentication}
+
+\subsection{SQLc implementation}
+
+\subsection{Spaced repetition algorithm}
+
+\subsection{AI integration}
