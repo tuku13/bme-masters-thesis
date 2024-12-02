@@ -5,9 +5,44 @@ This chapter explores three key concepts that power the learning platform: space
 REST is an architectural style for distributed hypermedia systems, originally introduced by Roy Fielding \cite{fielding2000} in his 2000 doctoral dissertation. Despite its widespread adoption in modern web development, it is worth exploring in detail here, particularly focusing on HATEOAS (Hypermedia as the Engine of Application State) - a less commonly understood principle that forms a crucial foundation for a concept discussed later in this thesis. By combining these techniques, the platform can create a tailored learning experience.
 
 \section{Spaced Repetition}
-TODO - everything about the algorithm, how does it work, examples, implementation
-TODO - mention the algorithm is not an exact algorithm with concrete parameters and constants, but more like a guideline
-TODO - TODO mention my algo, show a pseudo code, and mention this needs a lot of feedback from real users to 
+
+Spaced repetition is a method of learning at semantic intervals. These intervals become longer as the studying process goes on. Initially, these intervals are short, usually a few hours long, and for a long time, they could even be multiple years long. The method's primary goal is to help the practitioner retain the information in long-term memory.
+
+This method is the complete opposite of cramming; it is not trying to learn everything in the shortest possible time. It focuses on understanding the learning material for the long term by "re-learning" it repeatedly after increasing intervals. A German psychologist, Hermann Ebbinghaus, first described this learning technique in the late 19th century. In 1885, He published his research about memory and forgetting in his book On Memory~\cite{ebbinghaus1964memory}.
+
+In his book, He wrote about the \texttt{forgetting curve}, the idea of forgetting information at a predictable rate. He discovered humans forget information rapidly faster after the first learning, but reviewing the information at strategic intervals helps slow down it. The practical application of his theories was developed much later by German science journalist Sebastian Leitner in the 1970s. Figure~\ref{fig:forgetting-curve} visually shows the concept of \texttt{forgetting curve}.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/forgetting_curve}
+  \caption{The Curve of Forgetting, created by: Simon Baddeley}
+  \label{fig:forgetting-curve}
+\end{figure}
+
+Leitner's implementation is called the Leitner system \footnote{https://en.wikipedia.org/wiki/Leitner_system}. It is a paper-based method of using flashcards organized into numbered paper boxes. These paper boxes represent review intervals. When a question is answered correctly, it goes up by one, and when answered incorrectly, it goes down by one. Figure~\ref{fig:leitner-system} shows it visually.
+
+\begin{figure}[!h]
+  \centering
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/Leitner_system}
+  \caption{Leitner system, source: Wikipédia}
+  \label{fig:leitner-system}
+\end{figure}
+
+In 1987, a Polish computer engineer, Piotr Wozniak, created the first educational software implementing spaced repetition, called \texttt{SuperMemo} \footnote{https://www.supermemo.com/en}. His \texttt{SuperMemo} algorithm calculates the optimum interval for learning. The algorithm has evolved several times over the years; it uses different metrics and parameters to determine the optimal interval. The current version of his algorithm is SM-17\footnote{https://supermemo.guru/wiki/Algorithm_SM-17}. For the platform, I implemented a prototype algorithm similar but simpler to his using similar parameters.
+
+The core parameters of my algorithm are the following: \textt{score}, \textt{difficulty}, \textt{streak}, \textt{interval} and \textt{ease factor}.
+
+\textbf{score}: The \texttt{score} is the score the user reached when answering the given question. It is a number between one and five.
+
+\textbf{difficulty}: The \texttt{difficulty} of the question represents how challenging it is to remember the particular answer. It is used to adjust the review interval.
+
+\textbf{streak}: The \texttt{streak} represents the number of succesful consecutive recalls. It resets to 0 when the user struggles to answer correctly.
+
+\textbf{interval}: The \texttt{interval} is the time between the reviews. It is calculated all the other from all the parameters. It increases exponentially based on user performance.
+
+\textbf{ease factor}: The \texttt{ease factor} measures how easily and item is remembered over time. It increases for good performance and decreases for poor performance.
+
+The concrete Go implementation is detailed at the \texttt{Spaced repetition algorithm} subchapter~\ref{subsec:spaced-repetition-algorithm}.
 
 \section{Large Language Models}
 TODO - What is a large language model, how do they work briefly, supervised finetuning, qlora, prompt engineering, dataset, wikipedia articles, the final model(s), how we integrated it to the platform. This is mostly Máté's topic so when he is done i will start to write this part
