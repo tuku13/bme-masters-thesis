@@ -654,3 +654,66 @@ The presentation layer, specifically the API handlers, is responsible for valida
 SQL injection is a code injection technique that aims to access and modify unauthorized database data with carefully crafted queries. During this attack, the attacker tries to guess the SQL queries used by the application and then modify them through improperly validated inputs. Preventing this kind of attack is complicated due to the endless possibilities of inputs. Usually, the SQL libraries and Object Relational Mapping (ORM) software help the developers defend against it. The two SQL libraries I used do it differently; SQLx offers solutions for creating prepared statements, while SQLc generates code containing prepared statements.
 
 \section{AI integration Design}
+
+The AI features of the platform are integrated into the \texttt{LLM API} or the server that Máté calls NLP-Service\texttt{NLP-Service}NLP-Service. It is a small Python-based web server that provides the platform with question generation and context chunking capabilities. This component is entirely designed and implemented by Máté. One of his main design goals was to make this service expandable by providing an easy way to integrate different AI models.
+
+\subsection{Component architecture}
+
+Figure~\ref{fig:nlp-service-component} shows the components of the NLP-Service. The service provides four endpoints: one for chunking the long user context and 3 for generating questions for these types: single choice, multiple choice, and boolean questions. The service consists of these modules: \texttt{LLM-IO} for managing the question creation, \texttt{Lang-detect} for detecting the context's language, \texttt{Chunking} for chunking the text, and the LLM providers for making a unified interface for \texttt{LLM-IO} to communicate with the models.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/nlp-service-component.png}
+    \caption{Components of the NLP service, made by: Máté Debreczeni}
+    \label{fig:nlp-service-component}
+\end{figure}
+
+\subsection{Example request and response}
+
+Listing~\ref{lst:nlp-service-question-generation} shows an example HTTP request and its response for a multiple-choice question generation.
+
+\begin{lstlisting}[caption=Validation example,label=lst:nlp-service-question-generation]
+--- Request:
+
+POST /multiple-choice/create HTTP/1.1
+Host: llm-api.spacedace.orb.local:80
+Content-Type: application/json
+Content-Length: 134
+
+{
+  "prompt": "Napjainkban az összes Linux tűzfal alapját a 2001-ben megjelent, 2.4-es Linux kernel részét képezi netfilter képezi."
+}
+
+--- Response:
+
+HTTP/1.1 200 OK
+date: Mon, 02 Dec 2024 19:37:14 GMT
+server: uvicorn
+content-length: 392
+content-type: application/json
+
+{"question":"Melyik állítás igaz a Linux tűzfalakkal kapcsolatban a megadott kontextus alapján?","options":["A Linux tűzfalak alapja a 2001 előtti Linux kernel.","A netfilter a 2.4-es Linux kernel része, és a Linux tűzfalak alapját képezi.","A netfilter egy 2001 után fejlesztett tűzfal technológia.","A Linux tűzfalak nem használják a netfiltert."],"correct_options":["B"]}
+
+\end{lstlisting}
+
+\subsection{Endpoint overview}
+
+The following table~\ref{tab:nlp-service-endpoints} lists the available endpoint of the NLP-Service. Three endpoints for question generation receive a context chunk, and the service creates a prompt after detecting the language of the given text. It sends a request to the configured LLM, waits for its response to validate it, and sends it back to the caller. However, the chunking endpoint processes the text locally. It saves the chunks to the database and responds to the caller with the list of chunks and IDs.
+
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{URL} & \textbf{Method} & \textbf{Description} \\
+        \hline
+        /chunk & POST & Generate smaller text chunks from the given context\\
+        \hline
+        /single-choice/create & POST & Generates a single choice question \\
+        \hline
+        /true-or-false/create & POST & Generates a multiple choice question \\
+        \hline
+        /true-or-false/create & POST & Generates a boolean question \\
+        \hline
+    \end{tabular}
+    \caption{NLP-Service endpoint overview}
+    \label{tab:nlp-service-endpoints}
+\end{table}
