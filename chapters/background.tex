@@ -1,8 +1,8 @@
 \chapter{Theoretical background}
 
-This chapter explores three key concepts that power the learning platform: spaced repetition algorithm, Large Language Models and the REST (REpresentational State Transfer). Spaced repetition is a learning technique, that can help improve long-term retention by scheduling the learning material with increasing intervals. It is an evidence-based technique and is usually performed with flashcard-like methods, which makes it practical to implement into the learning platform. On the other hand, LLMs act as knowledge bases that generate targeted questions.
+This chapter explores three key concepts that power the learning platform: spaced repetition algorithm, Large Language Models (LLMs) and the REST (REpresentational State Transfer). Spaced repetition is a learning technique, that can help improve long-term retention by scheduling the learning material with increasing intervals. It is an evidence-based technique and is usually performed with flashcard-like methods, which makes it practical to implement into the learning platform. On the other hand, LLMs act as knowledge bases that generate targeted questions.
 
-REST is an architectural style for distributed hypermedia systems, originally introduced by Roy Fielding \cite{fielding2000} in his 2000 doctoral dissertation. Despite its widespread adoption in modern web development, it is worth exploring in detail here, particularly focusing on HATEOAS (Hypermedia as the Engine of Application State) - a less commonly understood principle that forms a crucial foundation for a concept discussed later in this thesis. By combining these techniques, the platform can create a tailored learning experience.
+REST is an architectural style for distributed hypermedia systems, originally introduced by Roy Fielding~\cite{fielding2000} in his 2000 doctoral dissertation. Despite its widespread adoption in modern web development, it is worth exploring in detail here, particularly focusing on HATEOAS (Hypermedia as the Engine of Application State) - a less commonly understood principle that forms a crucial foundation for a concept discussed later in this thesis. By combining these techniques, the platform can create a tailored learning experience.
 
 \section{Spaced Repetition}
 
@@ -10,7 +10,7 @@ Spaced repetition is a method of learning at semantic intervals. These intervals
 
 This method is the complete opposite of cramming; it is not trying to learn everything in the shortest possible time. It focuses on understanding the learning material for the long term by "re-learning" it repeatedly after increasing intervals. A German psychologist, Hermann Ebbinghaus, first described this learning technique in the late 19th century. In 1885, He published his research about memory and forgetting in his book On Memory~\cite{ebbinghaus1964memory}.
 
-In his book, He wrote about the \texttt{forgetting curve}, the idea of forgetting information at a predictable rate. He discovered humans forget information rapidly faster after the first learning, but reviewing the information at strategic intervals helps slow down it. The practical application of his theories was developed much later by German science journalist Sebastian Leitner in the 1970s. Figure~\ref{fig:forgetting-curve} visually shows the concept of \texttt{forgetting curve}.
+In his book, He wrote about the \texttt{forgetting curve}, the idea of forgetting information at a predictable rate. He discovered humans forget information rapidly faster after the first learning, but reviewing the information at strategic intervals helps slow down it. Figure~\ref{fig:forgetting-curve} visually shows the concept of \texttt{forgetting curve}. The first practical application of his theories was developed much later by German science journalist Sebastian Leitner in the 1970s.
 
 \begin{figure}[!h]
   \centering
@@ -36,7 +36,7 @@ The core parameters of my algorithm are the following: \textt{score}, \textt{dif
 
 \textbf{difficulty}: The \texttt{difficulty} of the question represents how challenging it is to remember the particular answer. It is used to adjust the review interval.
 
-\textbf{streak}: The \texttt{streak} represents the number of succesful consecutive recalls. It resets to 0 when the user struggles to answer correctly.
+\textbf{streak}: The \texttt{streak} represents the number of successful consecutive recalls. It resets to 0 when the user struggles to answer correctly.
 
 \textbf{interval}: The \texttt{interval} is the time between the reviews. It is calculated all the other from all the parameters. It increases exponentially based on user performance.
 
@@ -45,7 +45,19 @@ The core parameters of my algorithm are the following: \textt{score}, \textt{dif
 The concrete Go implementation is detailed at the \texttt{Spaced repetition algorithm} subchapter~\ref{subsec:spaced-repetition-algorithm}.
 
 \section{Large Language Models}
-TODO - What is a large language model, how do they work briefly, supervised finetuning, qlora, prompt engineering, dataset, wikipedia articles, the final model(s), how we integrated it to the platform. This is mostly Máté's topic so when he is done i will start to write this part
+
+"Large Language Models (LLMs) are advanced Artificial Intelligence (AI) systems that have undergone extensive training using large datasets in order to understand and produce language that closely resembles that of humans~\cite{buscemi2023comparative}."  These models can be used in various fields, e.g., education technology, healthcare, business, science, and software development. They provide a personalized user experience in these fields. Therefore, they are excellent for use on learning platforms like SpacedAce.
+
+The core innovation of LLMs lies in the transformer architecture introduced by Vaswani et al. in 2017~\cite{vaswani2017attention}. Transformers improve over earlier neural networks because they use a self-attention mechanism. It allows the models to process entire sequences simultaneously, enhancing efficiency and performance. The transformer architecture consists of two main parts: encoder and decoder. The encoder processes and transforms the input into a high-dimension representation, while the decoder generates the output word-by-word using the encoder's output and the previously generated tokens. Figure~\ref{fig:encoder-and-decoder} shows an encoder and decoder architecture.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/encoder-and-decoder.png}
+  \caption{Encoder and decoder architecture, created by: Damien Benveniste \footnote{https://newsletter.theaiedge.io/p/understanding-the-transformer-architecture}}
+  \label{fig:encoder-and-decoder}
+\end{figure}
+
+Key characteristics of modern LLMs include their ability to perform few-shot and zero-shot learning, meaning they can adapt to new tasks with minimal or no task-specific training~\cite{brown2020language}. Taking advantage of this feature, Máté finetuned a pre-trained \texttt{llama-3-8B-instruct1}\footnote{https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct} model and crafted prompts with few-shot prompting technique for the platform.
 
 \section{REST}
 
