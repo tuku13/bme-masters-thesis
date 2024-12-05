@@ -1,1 +1,21 @@
-\chapter{Conclusion and future work}\label{ch:conclusion-and-future-work}
+\chapter{Conclusion}\label{ch:conclusion-and-future-work}
+
+This chapter is divided into two sections. First~\ref{sec:summary} gives an overview of the performed tasks. And other~\ref{sec:future-work} one discovers opportunities to continue developing and improving the platform.
+
+\section{Summary}\label{sec:summary}
+
+The SpacedAce frontend application was the first Go project ever in my life. I started writing it before a \texttt{Hello World} program because it promised it would be simple and easy to learn. And I can just confirm that. After experimenting with the language and the framework for a few days, I started writing production-ready code. Initially, the development process was slow and more challenging than I would have done with tools I already knew, but later it became better and faster. The same was the case with HTMX. I already have experience with Javascript and client-state-heavy SPA frameworks before, but I have yet to try different approaches and technologies for the frontend. It required thinking in a different mental model but ultimately provided a refreshingly simple approach to building interactive web interfaces.
+
+Besides, the technologies I used were new to me. I successfully created a working prototype of the platform. It implemented the spaced ace learning algorithm and integrated Máté's LLM solution for the platform. This thesis explored the design and development of \texttt{SpacedAce} learning platform, presenting the potential of large language models in modern educational applications. It explains the core concepts and the most important technologies and shows the platform in terms of design and implementation.
+
+I tried and worked with relatively new and unfamiliar concepts and technologies, which all broadened my perspective and made me a better developer overall. The project required a lot of learning, trying, and failing, but it was worth it overall. I successfully implemented all the features I wanted initially, and it is almost ready to go public.
+
+\section{Future work}\label{sec:future-work}
+
+As with everything, this platform can constantly be improved. New features, better designs, more convenient solutions, and enhanced development processes are just a few.
+
+The platform currently supports three types of questions to generate: single-choice, multiple-choice, and boolean. It would be good to support open-ended questions. The users could submit their own, and the platform could review and score them. The platform needs adjustment to support this question type, and the underlying model must also be trained for this case. It would require much work, but it could improve the platform's capabilities.
+
+Another way to improve the platform is to use HTTP streams for question generation. Instead of a loading spinner and final question, the platform could show the question in smaller pieces as it generates. That would make the experience more interactive and provide immediate feedback about the generation.
+
+Also, a more automated development and deployment process using CI/CD solutions would speed up development and increase developer experience. Fortunately, this could be done relatively quickly. We used GitHub to store the code, the models, and the documents, and it has excellent support for CI/CD features.
