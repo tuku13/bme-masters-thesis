@@ -1,6 +1,4 @@
-%----------------------------------------------------------------------------
 \chapter{\bevezetes}
-%----------------------------------------------------------------------------
 
 This chapter briefly introduces the topic, why I chose it, what my motivation was behind the problem, and how I approached solving it. I will also examine other solutions available on the market and then compare them to my own in their context. Finally, I will present the structure of my thesis in the last section.
 
@@ -8,7 +6,7 @@ This chapter briefly introduces the topic, why I chose it, what my motivation wa
 
 \texttt{SpacedAce} is a modern e-learning platform offering personalized learning experiences and AI-powered quiz generation. It utilizes the spaced repetition learning technique popular among flashcard applications to maximize the user's performance and minimize the time spent on learning. It also integrates a state-of-the-art AI model to help create the learning material for the users from their context. The platform is co-created with Máté Debreczeni, who made the AI model and integrated it into the platform. He authored the training process, its results, and the integration into the platform in his master's thesis \textt{Tailored Learning Experiences: Custom LLM Integration in an E-Learning Platform}. I have been working on implementing the software part of the platform, and now I describe its details in this thesis.
 
-I have been a software developer specializing in web development for a few years. I have tried several frameworks and tools for work and hobby projects, and something new is constantly appearing that aims to revolutionize the current state of the web. I am always eager to dive in and give it a try. And that was the case with the HTMX \footnote{https://htmx.org/}, an untraditional web framework that takes a unique approach to building modern web applications. It does not tie you down but gives you the freedom and responsibility to choose the technologies involved.
+One of the challenges in building the platform was dealing with unique and unfamiliar technologies. I have been a software developer specializing in web development for over two years. Throughout that time, I have tried a few frameworks and tools for both work and hobby projects; most of them are well-known and used, but there were and always are alternatives that aim to revolutionize the current state of the web. I am always eager to dive in and give it a try. And that was the case with the HTMX\footnote{https://htmx.org/}, an untraditional web framework that takes a unique approach to building modern web applications. It does not tie you down but gives you the freedom and responsibility to choose the technologies involved. That was why I chose it as a first place.
 
 \section{Motivation}
 
@@ -29,4 +27,5 @@ There are different solutions for the case mentioned before, which have advantag
 All the listed solutions above have either an AI-powered question generation or personalized learning algorithms, but none combine them as \texttt{SpacedAce} does.
 
 \section{Overview of structure}
-TODO - some sentences about the structure, I will finish this part when the thesis is almost done, and the structure will not change significantly
+
+The thesis structure follows: Chapter ~\ref{ch:specification} specifies the task and shows the platform's use cases. Chapter~\ref{ch:theoretical-background} introduces three main concepts and the theory behind them. Chapter~\ref{ch:technologies} explains the core technologies used to build the platform. Chapter~\ref{ch:design} details the platform on the design side, while Chapter~\ref{ch:implementation} details it on the implementation side. Finally, \ref{ch:conclusion-and-future-work} summarizes the work and the results and brings up ideas for future work.
