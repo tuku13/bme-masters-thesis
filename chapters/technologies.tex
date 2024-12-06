@@ -3,12 +3,13 @@
 This chapter details the essential web technologies used to create the platforms. It starts by introducing Go and then continues with the Echo framework. It also shows the database libraries (SQLx and SQLC) used in the backend and templating language templ. Finally, it finishes by describing HTMX, the unique framework library.
 
 \section{Go}
-Go is a statically typed, compiled programming language created by three engineers: Robert Griesemer, Rob Pike, and Ken Thompson at Google. It first appeared in 2009 and gained popularity over the years. It was the 13. most popular programming language among the respondents of the 2023 Developer Survey\footnote{https://survey.stackoverflow.co/2023/} published by Stack Overflow\footnote{https://stackoverflow.com/}. Their methodology says They asked around 90,000 software developers from 185 countries around the world between May 8, 2023, and May 19, 2023.
+Go is a statically typed, compiled programming language created by three engineers: Robert Griesemer, Rob Pike, and Ken Thompson at Google. It first appeared in 2009 and gained popularity over the years. It was the 13. most popular programming language among the respondents of the 2023 Developer Survey\footnote{https://survey.stackoverflow.co/2023/} published by Stack Overflow\footnote{https://stackoverflow.com/}. Their methodology says They asked around 90,000 software developers from 185 countries around the world between May 8, 2023, and May 19, 2023. Figure~\ref{fig:go-stackoverflow} shows the survey results.
 
 \begin{figure}
     \centering
     \includegraphics[width=160mm, keepaspectratio]{figures/go-stack-overflow.png}
     \caption{Most popular programming languages - 2023 Developer Survey by Stack Overflow}
+    \label{fig:go-stackoverflow}
 \end{figure}
 
 The language is designed to make programmers more productive in several fields, including  Web development, Cloud, Command Line (CLI) Applications, and DevOps, by offering modern features and a robust standard library. In most cases, you could write programs relying only on the standard library without using external dependencies. Nevertheless, the language ecosystem has a unique package management solution with an easy-to-use module system. You can download the packages from their package registry called pkg.go.dev\footnote{https://pkg.go.dev/} or even directly from a code repository like GitHub\footnote{https://github.com/}.
