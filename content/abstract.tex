@@ -8,7 +8,16 @@
 %----------------------------------------------------------------------------
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 
-Jelen dokumentum egy diplomaterv sablon, amely formai keretet ad a BME Villamosmérnöki és Informatikai Karán végző hallgatók által elkészítendő szakdolgozatnak és diplomatervnek. A sablon használata opcionális. Ez a sablon \LaTeX~alapú, a \emph{TeXLive} \TeX-implementációval és a PDF-\LaTeX~fordítóval működőképes.
+Az online e-learning platformok forradalmasították a tanulást, lehetővé téve a rugalmas időbeosztást, és lehetőséget adva a diákoknak, hogy a saját tempójukban haladjanak. A nagy nyelvi modellek (LLM-ek) új dimenziót nyitnak a tanulásban, interaktív és személyre szabott élményeket nyújtva. Ez a munka célja a \texttt{SpacedAce} nevű, mesterséges intelligenciával működő tanulási platform megalkotása és bemutatása, amely valóban személyre szabott és lebilincselő oktatási élményt nyújt.
+
+A platform magja Go programozási nyelven íródott, az Echo webes keretrendszer használatával, amely robusztus és nagy teljesítményű háttérinfrastruktúrát biztosít. A rendszer felhasználói felülete a HTMX-t használja, egy kivételes frontend könyvtárat, amely szinte teljesen JavaScript-mentesen képes interaktív és dinamikus webes felületeket létrehozni.
+
+A platform egy finomhangolt, előtanított LLM-et integrál, amely a felhasználó által megadott tananyagból kérdéseket generál. Három típusú kérdés generálását támogatja: Egy válaszlehetőséges feleletválasztós, Több válaszlehetőséges feleletválasztós, valamint Igaz/Hamis típusú kérdéseket.
+
+A főbb funkciók közé tartozik a kérdésgenerálás, kvízek létrehozása, tananyagok ütemezése, automatikus értékelés és pontozás. A tananyagok személyre szabott, időközönkénti ismétlés-alapú algoritmus segítségével kerülnek automatikus ütemezésre, amely igazodik az egyéni tanulási igényekhez és optimalizálja a tudásmegtartást.
+
+A felvázolt e-learning platform bemutatja a feltörekvő webtechnológiák, különösen a HTMX, innovatív alkalmazását, és szemlélteti az LLM-ek oktatástechnológiában rejlő potenciálját.
+
 
 
 \vfill
@@ -20,8 +29,15 @@ Jelen dokumentum egy diplomaterv sablon, amely formai keretet ad a BME Villamosm
 %----------------------------------------------------------------------------
 \chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
 
-This document is a \LaTeX-based skeleton for BSc/MSc~theses of students at the Electrical Engineering and Informatics Faculty, Budapest University of Technology and Economics. The usage of this skeleton is optional. It has been tested with the \emph{TeXLive} \TeX~implementation, and it requires the PDF-\LaTeX~compiler.
+Online e-learning platforms have revolutionized learning, enabling flexible scheduling and allowing students to progress at their own pace. Large language models (LLM) take learning to a new dimension by providing interactive and personalized experiences. This work aims to create and demonstrate \texttt{SpacedAce}, an AI-powered learning platform designed to provide a truly personalized and engaging educational experience.
 
+The platform's core is written in Go using the Echo web framework, which provides a robust and performant backend infrastructure. The system's frontend utilizes HTMX, an extraordinary frontend library that promises nearly zero JavaScript to create interactive and dynamic web interfaces.
+
+The platform integrates a fine-tuned pre-trained LLM to generate questions from user-provided learning material. It supports generating three types of questions: Multiple Choice - Single Answer, Multiple Choice - Multiple Answers, and Boolean, also known as True or False.
+
+Key features include question generation, quiz creation, learning material scheduling, automatic evaluation, and scoring. The learning materials are automatically scheduled using a personalized, spaced, repetition-based algorithm that adapts to individual learning needs and optimizes knowledge retention.
+
+The proposed e-learning platform demonstrates the innovative application of emerging web technologies, specifically HTMX,  and illustrates the potential of  LLMs in educational technology.
 
 \vfill
 \selectthesislanguage
