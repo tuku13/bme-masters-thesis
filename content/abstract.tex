@@ -8,17 +8,15 @@
 %----------------------------------------------------------------------------
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 
-Az online e-learning platformok forradalmasították a tanulást, lehetővé téve a rugalmas időbeosztást, és lehetőséget adva a diákoknak, hogy a saját tempójukban haladjanak. A nagy nyelvi modellek (LLM-ek) új dimenziót nyitnak a tanulásban, interaktív és személyre szabott élményeket nyújtva. Ez a munka célja a \texttt{SpacedAce} nevű, mesterséges intelligenciával működő tanulási platform megalkotása és bemutatása, amely valóban személyre szabott és lebilincselő oktatási élményt nyújt.
+Az online e-learning platformok nagy népszerűségre tettek szert az utóbbi években azzal, hogy rugalmas és személyre szabott tanulást kínálnak. Ezek a platformok jellemzően olyan funkciókat érhetők el, mint a manuális flashcard készítés, kvízek és személyre szabott tananyag ütemezés. A nagy nyelvi modellek (LLM-ek) ma már szinte minden területen használtak, beleértve az üzleti életet, az oktatást, a technológiát és a tudományt. Ezen modellek képesek az emberihez hasonló szövegek megértésére és megválaszolására. A dolgozat célja a \texttt{SpacedAce} nevű modern e-learning platform megtervezése, megvalósítása és bemutatása, amely az időközönkénti ismétlésen (spaced repetition) alapuló személyre szabott tanulást LLM-ekkel integrálja.
 
-A platform magja Go programozási nyelven íródott, az Echo webes keretrendszer használatával, amely robusztus és nagy teljesítményű háttérinfrastruktúrát biztosít. A rendszer felhasználói felülete a HTMX-t használja, egy kivételes frontend könyvtárat, amely szinte teljesen JavaScript-mentesen képes interaktív és dinamikus webes felületeket létrehozni.
+A platform fő szolgáltatása, a backend Go nyelven íródott Echo web keretrendszer használatával, míg a platform frontendje HTMX-el, egy egyedi frontend könyvtárral, mely közel nulla JavaScript használatát ígéri interaktív és dinamikus webes alkalmazások létrehozásához.
 
-A platform egy finomhangolt, előtanított LLM-et integrál, amely a felhasználó által megadott tananyagból kérdéseket generál. Három típusú kérdés generálását támogatja: Egy válaszlehetőséges feleletválasztós, Több válaszlehetőséges feleletválasztós, valamint Igaz/Hamis típusú kérdéseket.
+A platform egy finomhangolt, előre tanított LLM-et integrál, mely kérdéseket tud generálni a felhasználó által megadott tananyagból. Háromféle kérdés generálását támogatja: egy megoldásos feleletválasztós, több megoldásos feleletválasztós és eldöntendő vagy másnevén igaz/hamis.
 
-A főbb funkciók közé tartozik a kérdésgenerálás, kvízek létrehozása, tananyagok ütemezése, automatikus értékelés és pontozás. A tananyagok személyre szabott, időközönkénti ismétlés-alapú algoritmus segítségével kerülnek automatikus ütemezésre, amely igazodik az egyéni tanulási igényekhez és optimalizálja a tudásmegtartást.
+A főbb funkciók közé tartozik a kérdésgenerálás, a kvízkészítés, a tananyag ütemezés, az automatikus értékelés és a pontozás. A tananyagot automatikusan ütemezi egy személyre szabott, ismétléses ütemezésen alapuló algoritmus segítségével, amely alkalmazkodik az egyéni tanulási igényekhez és optimalizálja a tudás megőrzését.
 
-A felvázolt e-learning platform bemutatja a feltörekvő webtechnológiák, különösen a HTMX, innovatív alkalmazását, és szemlélteti az LLM-ek oktatástechnológiában rejlő potenciálját.
-
-
+A felvázolt e-learning platform bemutatja a nem hagyományos webes technológiák, például az HTMX alkalmazását és az LLM-ek oktatási technológiában rejlő lehetőségeit.
 
 \vfill
 \selectenglish
@@ -29,15 +27,15 @@ A felvázolt e-learning platform bemutatja a feltörekvő webtechnológiák, kü
 %----------------------------------------------------------------------------
 \chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
 
-Online e-learning platforms have revolutionized learning, enabling flexible scheduling and allowing students to progress at their own pace. Large language models (LLM) take learning to a new dimension by providing interactive and personalized experiences. This work aims to create and demonstrate \texttt{SpacedAce}, an AI-powered learning platform designed to provide a truly personalized and engaging educational experience.
+Online e-learning platforms have gained popularity in recent years because they allow personalized and flexible learning. These platforms typically offer features such as manual flashcard creation, quizzes, and personalized learning schedules. Today, Large language models (LLMs) are used in nearly every field, including business, education, technology, and science. These models are capable of understanding and responding to human-like texts. This work aims to design, implement, and present \texttt{SpacedAce}, a modern learning platform that integrates spaced repetition-based personalized learning with LLMs.
 
-The platform's core is written in Go using the Echo web framework, which provides a robust and performant backend infrastructure. The system's frontend utilizes HTMX, an extraordinary frontend library that promises nearly zero JavaScript to create interactive and dynamic web interfaces.
+The platform's main service, the backend, is written in Go using the Echo web framework, while the platform's frontend utilizes HTMX, a unique frontend library that promises nearly zero JavaScript to create interactive and dynamic web applications.
 
 The platform integrates a fine-tuned pre-trained LLM to generate questions from user-provided learning material. It supports generating three types of questions: Multiple Choice - Single Answer, Multiple Choice - Multiple Answers, and Boolean, also known as True or False.
 
 Key features include question generation, quiz creation, learning material scheduling, automatic evaluation, and scoring. The learning materials are automatically scheduled using a personalized, spaced, repetition-based algorithm that adapts to individual learning needs and optimizes knowledge retention.
 
-The proposed e-learning platform demonstrates the innovative application of emerging web technologies, specifically HTMX,  and illustrates the potential of  LLMs in educational technology.
+The proposed e-learning platform shows the application of untraditional web technologies such as HTMX and the potential of LLMs in educational technology.
 
 \vfill
 \selectthesislanguage

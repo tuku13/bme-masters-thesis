@@ -1,6 +1,6 @@
 \chapter{Theoretical background}\label{ch:theoretical-background}
 
-This chapter explores three key concepts that power the learning platform: spaced repetition algorithm, Large Language Models (LLMs) and the REST (REpresentational State Transfer). Spaced repetition is a learning technique, that can help improve long-term retention by scheduling the learning material with increasing intervals. It is an evidence-based technique and is usually performed with flashcard-like methods, which makes it practical to implement into the learning platform. On the other hand, LLMs act as knowledge bases that generate targeted questions.
+This chapter explores three key concepts that power the learning platform: the spaced repetition algorithm, large language models (LLMs), and the REST (REpresentational State Transfer). Spaced repetition is a learning technique that can help improve long-term retention by scheduling the learning material at increasing intervals \cite{ebbinghaus1964memory}. It is an evidence-based technique and is usually performed with flashcard-like methods, which makes it practical to implement into the learning platform. On the other hand, LLMs act as knowledge bases that generate targeted questions.
 
 REST is an architectural style for distributed hypermedia systems, originally introduced by Roy Fielding~\cite{fielding2000} in his 2000 doctoral dissertation. Despite its widespread adoption in modern web development, it is worth exploring in detail here, particularly focusing on HATEOAS (Hypermedia as the Engine of Application State) - a less commonly understood principle that forms a crucial foundation for a concept discussed later in this thesis. By combining these techniques, the platform can create a tailored learning experience.
 
@@ -10,7 +10,7 @@ Spaced repetition is a method of learning at semantic intervals. These intervals
 
 This method is the complete opposite of cramming; it is not trying to learn everything in the shortest possible time. It focuses on understanding the learning material for the long term by "re-learning" it repeatedly after increasing intervals. A German psychologist, Hermann Ebbinghaus, first described this learning technique in the late 19th century. In 1885, He published his research about memory and forgetting in his book On Memory~\cite{ebbinghaus1964memory}.
 
-In his book, He wrote about the \texttt{forgetting curve}, the idea of forgetting information at a predictable rate. He discovered humans forget information rapidly faster after the first learning, but reviewing the information at strategic intervals helps slow down it. Figure~\ref{fig:forgetting-curve} visually shows the concept of \texttt{forgetting curve}. The first practical application of his theories was developed much later by German science journalist Sebastian Leitner in the 1970s.
+In his book, Ebbinghaus wrote about the \texttt{forgetting curve}, the idea of forgetting information at a predictable rate. He discovered that humans forget information rapidly faster after the first learning, but reviewing the information at strategic intervals helps slow it down. Figure~\ref{fig:forgetting-curve} visually shows the concept of \texttt{forgetting curve}. The first practical application of his theories was developed much later by German science journalist Sebastian Leitner in the 1970s.
 
 \begin{figure}[!h]
   \centering
@@ -28,7 +28,7 @@ Leitner's implementation is called the Leitner system \footnote{https://en.wikip
   \label{fig:leitner-system}
 \end{figure}
 
-In 1987, a Polish computer engineer, Piotr Wozniak, created the first educational software implementing spaced repetition, called \texttt{SuperMemo} \footnote{https://www.supermemo.com/en}. His \texttt{SuperMemo} algorithm calculates the optimum interval for learning. The algorithm has evolved several times over the years; it uses different metrics and parameters to determine the optimal interval. The current version of his algorithm is SM-17\footnote{https://supermemo.guru/wiki/Algorithm_SM-17}. For the platform, I implemented a prototype algorithm similar but simpler to his using similar parameters.
+In 1987, a Polish computer engineer, Piotr Wozniak, created the first educational software implementing spaced repetition, called \texttt{SuperMemo} \footnote{https://www.supermemo.com/en}. His \texttt{SuperMemo} algorithm calculates the optimum interval for learning. The algorithm has evolved several times, using different metrics and parameters to determine the optimal interval. The current version of his algorithm is SM-17\footnote{https://supermemo.guru/wiki/Algorithm_SM-17}. For the platform, I implemented a prototype algorithm similar but simpler to his using similar parameters.
 
 The core parameters of my algorithm are the following: \textt{score}, \textt{difficulty}, \textt{streak}, \textt{interval} and \textt{ease factor}.
 
