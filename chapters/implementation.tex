@@ -15,7 +15,9 @@ The first figure~\ref{fig:screenshot-quizzes} illustrates the application's main
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth, keepaspectratio]{figures/screenshot-quizzes.png}
+	\frame{
+		\includegraphics[width=0.9\textwidth, keepaspectratio]{figures/screenshot-quizzes.png}
+	}
 	\caption{My quizzes page}
 	\label{fig:screenshot-quizzes}
 \end{figure}
@@ -24,7 +26,9 @@ The second figure~\ref {fig:screenshot-question-generation} uses the platform's 
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth, keepaspectratio]{figures/screenshot-question-generation.png}
+	\frame{
+		\includegraphics[width=0.9\textwidth, keepaspectratio]{figures/screenshot-question-generation.png}
+	}
 	\caption{Question generation}
 	\label{fig:screenshot-question-generation}
 \end{figure}
@@ -33,18 +37,20 @@ The last figure~\ref{fig:screenshot-learn-page} in the subsection illustrates th
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth, keepaspectratio]{figures/screenshot-learn-page.png}
+	\frame{
+		\includegraphics[width=0.9\textwidth, keepaspectratio]{figures/screenshot-learn-page.png}
+	}
 	\caption{Learn page}
 	\label{fig:screenshot-learn-page}
 \end{figure}
 
 \subsection{Project structure}
 
-The project follows a flat folder structure hierarchy inspired by \texttt{The Go Standard Project Layout}\footnote{https://github.com/golang-standards/project-layout}. Figure \ref{fig:frontend-project-structure} shows this folder structure visually.
+The project follows a flat folder structure hierarchy inspired by \texttt{The Go Standard Project Layout}\footnote{https://github.com/golang-standards/project-layout}. Figure~\ref{fig:frontend-project-structure} shows this folder structure visually.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/frontend-project-structure.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/frontend-project-structure.png}
     \caption{Frontend project structure}
     \label{fig:frontend-project-structure}
 \end{figure}
@@ -73,26 +79,19 @@ The project follows a flat folder structure hierarchy inspired by \texttt{The Go
 
 \subsection{Data models}
 
-The application operates with three layers of data models. Each has a specific use case and can be mapped into other layer equivalents with mapping functions. These layers are the following: \texttt{business} used for doing the business logic, \texttt{external} used as Data Transfer Objects (DTO), and \texttt{request} used as communicating with the user. Listing \ref{lst:mapping-example} shows an example for mapping a quiz result object from \texttt{external} to \texttt{business} layer.
+The application operates with three layers of data models. Each has a specific use case and can be mapped into other layer equivalents with mapping functions. These layers are the following: \texttt{business} used for doing the business logic, \texttt{external} used as Data Transfer Objects (DTO), and \texttt{request} used as communicating with the user. Listing~\ref{lst:mapping-example} shows an example for mapping a question object from \texttt{external} to \texttt{business} layer.
 
 \begin{lstlisting}[caption=Mapping from external to business,label=lst:mapping-example]
-func (result *QuizResult) MapToBusiness() (*business.QuizResult, error) {
-    answerScores := make([]business.AnswerScore, 0, len(result.AnswerScores))
-    for _, score := range result.AnswerScores {
-        answerScore, err := score.MapToBusiness()
-        if err != nil {
-            return nil, err
-        }
-        answerScores = append(answerScores, *answerScore)
-    }
-
-    return &business.QuizResult{
-        ID:           result.ID,
-        SessionID:    result.SessionID,
-        MaxScore:     result.MaxScore,
-        Score:        result.Score,
-        AnswerScores: answerScores,
-    }, nil
+func (a MultipleChoiceAnswer) MapToBusiness() (*business.MultipleChoiceAnswer, error) {
+	return &business.MultipleChoiceAnswer{
+		CommonAnswerData: business.CommonAnswerData{
+			Id:         a.ID,
+			SessionId:  a.SessionID,
+			QuestionId: a.QuestionID,
+			AnswerType: a.AnswerType,
+		},
+		Answers: strings.Split(a.Answers, ""),
+	}, nil
 }
 \end{lstlisting}
 
@@ -147,7 +146,7 @@ I designed a pipeline-like structure for rendering the components to make them e
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/rendering-pipeline.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/rendering-pipeline.png}
     \caption{Rendering pipeline}
     \label{fig:rendering-pipeline}
 \end{figure}
@@ -194,7 +193,7 @@ templ LoginForm(errors map[string]string) {
 
 \subsection{Backend integration}
 
-The frontend server makes HTTP requests to the backend endpoints using the ApiService from the context. ApiService is a proxy class that abstracts HTTP requests into function calls. It offers a unified and automated way to communicate with the backend. The session middleware constantly creates one instance for the current context containing the session information. The service's responsibility is to attach the session cookie to each request, and it manages by offering a common request sending and parsing function. This function takes the URL, HTTP method name, request, and response objects as parameters, creates a request, attaches the session cookie to the HTTP header, and processes the request. Listing \ref{lst:api-service} shows the code of this util function.
+The frontend server makes HTTP requests to the backend endpoints using the ApiService from the context. ApiService is a proxy class that abstracts HTTP requests into function calls. It offers a unified and automated way to communicate with the backend. The session middleware constantly creates one instance for the current context containing the session information. The service's responsibility is to attach the session cookie to each request, and it manages by offering a common request sending and parsing function. This function takes the URL, HTTP method name, request, and response objects as parameters, creates a request, attaches the session cookie to the HTTP header, and processes the request. Listing~\ref{lst:api-service} shows the code of this util function.
 
 \begin{lstlisting}[caption=ApiService code,label=lst:api-service]
 func (a *ApiService) getResponse(method, path string, requestBody any, responseBody interface{}) error {
@@ -244,11 +243,11 @@ func (a *ApiService) getResponse(method, path string, requestBody any, responseB
 
 \section{Backend implementation}
 
-The backend server is a traditional API server that functions as the platform's core component. It is written in Go using the Echo web framework. This section details the project, how the data is used, and how the authentication, database communication, or the spaced repetition algorithm are implemented. This section focuses on highlighting the exciting and unique details of the implementation.
+ This section details the backend project, how the data is used, and how the authentication, database communication, or the spaced repetition algorithm are implemented. It focuses on highlighting the exciting and unique details of the implementation.
 
 \subsection{Project structure}
 
-The backend follows a flat folder structure hierarchy similar to the frontend with backend-specific features. This structure is a bit chaotic now, mainly due to using different SQL libraries. It needs some changes, but it is suitable for now. Figure~\ref{fig:backend-project-structure} shows the structure visually. Some parts, for example, config files, are missing from the figure because they are placed into the root, but this figure is about the folders.
+The backend follows a flat folder structure hierarchy similar to the frontend with backend-specific features. This structure is a bit chaotic now, mainly due to using different SQL libraries.Figure~\ref{fig:backend-project-structure} shows the structure visually. Some parts, for example, config files, are missing from the figure because they are placed into the root, but this figure is about the folders.
 
 \begin{figure}[H]
 	\centering
@@ -412,4 +411,4 @@ The AI features are found in different services but are available from the backe
 
 When a user submits long text as a question context, the server calculates a hash for later identification and splits it recursively into 2-3 paragraph chunks. For the first time, the first chunk and the question type are sent to the LLM API, which takes care of the generation. Next time, the server will check the hash and find the next chunk for the generation. These chunks are stored in the database and cached in memory to optimize retrieval speed.
 
-The questions return from the LLM API as JSON objects in HTTP responses. The generation usually takes several seconds to finish; until then, the server and client have to wait. As I wrote this thesis, Máté and I started considering implementing HTTP streams besides the current method, allowing the client to show partially generated questions. This concept is more complicated than the implemented one and would need changes in every layer. It idea could be an excellent idea for improving the overall user experience.
+The questions return from the LLM API as JSON objects in HTTP responses. The generation usually takes several seconds to finish; until then, the server and client have to wait. As I wrote this thesis, Máté and I started considering implementing HTTP streams besides the current method, allowing the client to show partially generated questions. This concept is more complicated than the implemented one and would need changes in every layer. This idea could be excellent for improving the overall user experience.

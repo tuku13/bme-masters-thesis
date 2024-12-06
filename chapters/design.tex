@@ -10,7 +10,7 @@ The platform consists of five main parts: the frontend, backend, database, LLM-A
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/high-level-architecture.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/high-level-architecture.png}
     \caption{High-level system architecture}
     \label{fig:high-level-architecture}
 \end{figure}
@@ -31,7 +31,7 @@ Figure~\ref{fig:component-interaction} shows an example interaction between the 
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/component-interaction.png}
+    \includegraphics[width=0.85\textwidth, keepaspectratio]{figures/component-interaction.png}
     \caption{Component interaction: Question generation}
     \label{fig:component-interaction}
 \end{figure}
@@ -52,18 +52,18 @@ The LLMs, even these smaller ones, need a lot of resources. Thus, question gener
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/dev-deployment.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/dev-deployment.png}
     \caption{Developer deployment}
     \label{fig:dev-deployment}
 \end{figure}
 
 \subsubsection{Production deployment}
 
-We use a similar structure for production but without the Gemini model. We also split up the parts in this case into two, as Figure \ref{fig:production-deployment} shows. The regular services (frontend, backend, database, LLM API) are found on Máté's VPS (Virtual Private Server) in a Kubernetes\footnote{https://kubernetes.io/} cluster, while the AI model is deployed to an external provider. The VPS has no GPU; thus, we selected a provider specializing in running LLMs.
+We use a similar structure for production but without the Gemini model. We also split up the parts in this case into two, as Figure~\ref{fig:production-deployment} shows. The regular services (frontend, backend, database, LLM API) are found on Máté's VPS (Virtual Private Server) in a Kubernetes\footnote{https://kubernetes.io/} cluster, while the AI model is deployed to an external provider, RunPod \footnote{https://www.runpod.io/}. The VPS has no GPU; thus, we selected a provider specializing in running LLMs.
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/production-deployment.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/production-deployment.png}
     \caption{Production deployment}
     \label{fig:production-deployment}
 \end{figure}
@@ -84,7 +84,7 @@ This section discusses the entities and their relationships in the application a
 
 \subsubsection{Users and sessions}
 
-The database has two entities tightly connected to the user: User and Session. The User entity holds regular information about the user, like name, email, and hashed password, while the session stores the current user's session and its validity. When the user authenticates, a session is created and sent to the user's computer as a session cookie for later use. The session ID is used for authentication throughout the whole platform and has an expiration date when a pgchron task automatically deletes it. Figure \ref{fig:er-user-and-session} displays the entities and the relationship between them.
+The database has two entities tightly connected to the user: User and Session. The User entity holds regular information about the user, like name, email, and hashed password, while the session stores the current user's session and its validity. When the user authenticates, a session is created and sent to the user's computer as a session cookie for later use. The session ID is used for authentication throughout the whole platform and has an expiration date when a pgchron task automatically deletes it. Figure~\ref{fig:er-user-and-session} displays the entities and the relationship between them.
 
 \begin{figure}[H]
     \centering
@@ -97,22 +97,22 @@ The database has two entities tightly connected to the user: User and Session. T
 
 The platform's core entities are the Quizzes and their questions. Each quiz has a name, description, and creator and is linked to different types of questions. There are three types of questions: SingleChoiceQuestion, a question with only one correct answer; MultipleChoiceQuestion, which can have multiple correct answers; and TrueOrFalseQuestion, aka a boolean question. Each type has its entity and table in the database. They are mostly the same; they all have a more extended text field describing the question and differ in the answer type.
 
-The quizzes can be accessed through a QuizAccess entity, which links the user to a quiz with a role. By default, an instance with an owner role is generated automatically when a user creates a quiz. This abstraction allows controlling which quiz can be viewed or edited by whom. It also makes it available for future development as a platform for sharing private quizzes or creating public ones. Figure \ref{fig:er-quizzes} displays the quizzes, types of questions, and accesses in an ER diagram.
+The quizzes can be accessed through a QuizAccess entity, which links the user to a quiz with a role. By default, an instance with an owner role is generated automatically when a user creates a quiz. This abstraction allows controlling which quiz can be viewed or edited by whom. It also makes it available for future development as a platform for sharing private quizzes or creating public ones. Figure~\ref{fig:er-quizzes} displays the quizzes, types of questions, and accesses in an ER diagram.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-quizzes.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/er-quizzes.png}
     \caption{ER Diagram for quizzes and questions}
     \label{fig:er-quizzes}
 \end{figure}
 
 \subsubsection{Quiz sessions}
 
-Another essential entity category is related to answering questions. The central entity is the QuizSession, which holds the information together for quiz completion. It accounts for start and finish time and links to answers connected to questions. And it is also related to the quiz result if it is submitted. Some answer entities hold the information of the user's answer to the given question. Figure \ref{fig:er-quiz-session} shows these relations.
+Another essential entity category is related to answering questions. The central entity is the QuizSession, which holds the information together for quiz completion. It accounts for start and finish time and links to answers connected to questions. And it is also related to the quiz result if it is submitted. Some answer entities hold the information of the user's answer to the given question. Figure~\ref{fig:er-quiz-session} shows these relations.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-quiz-sessions.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/er-quiz-sessions.png}
     \caption{ER Diagram for quiz sessions}
     \label{fig:er-quiz-session}
 \end{figure}
@@ -123,31 +123,31 @@ In addition to the entities detailed before, there are more entities related to 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-quiz-result.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/er-quiz-result.png}
     \caption{ER Diagram for answers and quiz results}
     \label{fig:er-quiz-result}
 \end{figure}
 
-Each AnswerScore has a max\_score and score field, which holds the maximum available and the obtained score. It establishes three distinct relationships corresponding to different question types. These relationships are structured with cardinality constraints, ensuring that a single AnswerScore can be linked to only one question at a time, maintaining a one-to-zero or one-to-one connection depending on the specific question type. Figure \ref{fig:er-quiz-result} shows all the entities and relations mentioned in these paragraphs.
+Each AnswerScore has a max\_score and score field, which holds the maximum available and the obtained score. It establishes three distinct relationships corresponding to different question types. These relationships are structured with cardinality constraints, ensuring that a single AnswerScore can be linked to only one question at a time, maintaining a one-to-zero or one-to-one connection depending on the specific question type. Figure~\ref{fig:er-quiz-result} shows all the entities and relations mentioned in these paragraphs.
 
 \subsubsection{Learning list}
 
-LearnListAddedItem is a small entity that links the users to the quizzes they decided to start learning with the spaced repetition algorithm. When a LearnListAddItem is inserted, the platform automatically creates and schedules ReviewItem entities for each quiz question with initial learning parameters. Also, by removing a learn list item, the ReviewItems are deleted. Figure \ref{fig:er-learn-list} shows the connection between the user and the selected quizzes in the context of a learning list.
+LearnListAddedItem is a small entity that links the users to the quizzes they decided to start learning with the spaced repetition algorithm. When a LearnListAddItem is inserted, the platform automatically creates and schedules ReviewItem entities for each quiz question with initial learning parameters. Also, by removing a learn list item, the ReviewItems are deleted. Figure~\ref{fig:er-learn-list} shows the connection between the user and the selected quizzes in the context of a learning list.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-learn-list.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/er-learn-list.png}
     \caption{ER Diagram for learn list}
     \label{fig:er-learn-list}
 \end{figure}
 
 \subsubsection{Review items}
 
-The ReviewItem item is the core entity of the spaced repetition algorithm. When the user adds a quiz to its learning list, one instance is created and scheduled for learning immediately for each question. A ReviewItem is always linked to the user; each relation includes strictly one question. Figure \ref{fig:er-review-items} shows these relations.
+The ReviewItem item is the core entity of the spaced repetition algorithm. When the user adds a quiz to its learning list, one instance is created and scheduled for learning immediately for each question. A ReviewItem is always linked to the user; each relation includes strictly one question. Figure~\ref{fig:er-review-items} shows these relations.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/er-review-items.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/er-review-items.png}
     \caption{ER Diagram for review items}
     \label{fig:er-review-items}
 \end{figure}
@@ -172,7 +172,7 @@ A reasonable indexing strategy can boost a database's performance, accelerating 
 
 \subsubsection{Constrains and integrity rules}
 
-System integrity is one of the most critical requirements, if not the most vital. Proper settings and rules can enforce it. To keep the database consistent, we used these additional constraints: ON DELETE CASCASE, UNIQUE, and CHECK. The first one ensures that when a record is deleted, all the records in other tables referring to it are also deleted. The UNIQUE was used to avoid inserting a record already in the table again. Finally, the CHECK was used in the ANSWER\_SCORES and REVIEW\_ITEMS tables to prevent multiple questions from being linked to them. Listing \ref{lst:db-check-constraint} shows an example using the CHECK constraint on the ANSWER\_SCORES table.
+System integrity is one of the most critical requirements, if not the most vital. Proper settings and rules can enforce it. To keep the database consistent, we used these additional constraints: ON DELETE CASCADE, UNIQUE, and CHECK. The first one ensures that when a record is deleted, all the records in other tables referring to it are also deleted. The UNIQUE was used to avoid inserting a record already in the table again. Finally, the CHECK was used in the ANSWER\_SCORES and REVIEW\_ITEMS tables to prevent multiple questions from being linked to them. Listing~\ref{lst:db-check-constraint} shows an example using the CHECK constraint on the ANSWER\_SCORES table.
 
 \begin{lstlisting}[caption=Using CHECK constraint,label=lst:db-check-constraint]
 CREATE TABLE IF NOT EXISTS answer_scores(
@@ -201,7 +201,7 @@ Designing an application's front end is as important as planning the other parts
 
 The frontend design methodology follows a minimalist, modern approach similar to shadcn/ui\footnote{https://ui.shadcn.com/}, a UI component collection popularized by Vercel\footnote{https://vercel.com/} made for React and other web frameworks. The application does not use these components and styles because HTMX is not supported directly. Still, their source code is publicly available, and these components are made to copy-paste and customize later. It served as a good starting point for the application's methodology.
 
-shadcn/ui is a collection of beautifully designed reusable UI components for web applications. They have a very minimal style and color selection because the creator made them to be customized by the developers. However, these components look good in reality by default, and most small applications and MVPs do not require an extraordinary design; the developers started using them as they are, and others kept following them until they became viral in 2024. Figure\ref{fig:shadcn} shows some of these components.
+shadcn/ui is a collection of beautifully designed reusable UI components for web applications. They have a very minimal style and color selection because the creator made them to be customized by the developers. However, these components look good in reality by default, and most small applications and MVPs do not require an extraordinary design; the developers started using them as they are, and others kept following them until they became viral in 2024. Figure~\ref{fig:shadcn} shows some of these components.
 
 \begin{figure}[H]
     \centering
@@ -210,7 +210,7 @@ shadcn/ui is a collection of beautifully designed reusable UI components for web
     \label{fig:shadcn}
 \end{figure}
 
-An alternative approach could have been Google's Material Design\footnote{https://m3.material.io/}, another popular option. It is used in almost every Google product and supports various frameworks, including Android applications. It is battle-tested because its first version was released 10 years ago and underwent significant redesigns, but it always stayed well-welcomed. Figure \ref{fig:material3} shows an example of their current version (Material 3). While they are designed well, and their components look consistent across different platforms, they are not easily customized and used outside the supported frameworks.
+An alternative approach could have been Google's Material Design\footnote{https://m3.material.io/}, another popular option. It is used in almost every Google product and supports various frameworks, including Android applications. It is battle-tested because its first version was released 10 years ago and underwent significant redesigns, but it always stayed well-welcomed. Figure~\ref{fig:material3} shows an example of their current version (Material 3). While they are designed well, and their components look consistent across different platforms, they are not easily customized and used outside the supported frameworks.
 
 \begin{figure}[H]
     \centering
@@ -221,7 +221,7 @@ An alternative approach could have been Google's Material Design\footnote{https:
 
 \subsubsection{User experience principles and goals}
 
-To create an enjoyable user experience, we must consider some user experience (UX) principles, as outlined in \cite{cooper2014face}. Users are diverse, with a wide range of needs and backgrounds, but we must design interfaces that suit most users. This involves adopting design practices prioritizing clarity, accessibility, responsiveness, and intuitiveness. The following principles and goals guided the development of the frontend application:
+To create an enjoyable user experience, we must consider some user experience (UX) principles, as outlined in~\cite{cooper2014face}. Users are diverse, with a wide range of needs and backgrounds, but we must design interfaces that suit most users. This involves adopting design practices prioritizing clarity, accessibility, responsiveness, and intuitiveness. The following principles and goals guided the development of the frontend application:
 
 \begin{itemize}
 \item \textbf{Clarity and simplicity}: The application's interface should communicate clearly and avoid unnecessary complexity.
@@ -234,7 +234,7 @@ To create an enjoyable user experience, we must consider some user experience (U
 
 I chose a technology stack that supports the described design methodology and gives a breath of fresh air by using something other than well-established web frameworks. That is why I created the platform using HTMX and Go. For styling the platform, I used tailwindcss \footnote{https://tailwindcss.com/}, a utility-first CSS library instead of plain CSS. It supports rapid prototyping and development and features a versatile pre-defined color palette perfect for websites with a modern minimalist design.
 
-HTMX is a lightweight JavaScript library that enables declarative HTTP requests via HTML attributes, inserting HTML fragments from the response directly into the DOM. This extension of HTML functionality provides interactivity comparable to modern client-side frameworks. HTMX runs on the user's browser, while the server can use any technology compatible with the HTTP protocol. Table \ref{tab:htmx-vs-others} summarizes the difference between HTMX and traditional SPA frameworks.
+HTMX is a lightweight JavaScript library that enables declarative HTTP requests via HTML attributes, inserting HTML fragments from the response directly into the DOM. This extension of HTML functionality provides interactivity comparable to modern client-side frameworks. HTMX runs on the user's browser, while the server can use any technology compatible with the HTTP protocol. Table~\ref{tab:htmx-vs-others} summarizes the difference between HTMX and traditional SPA frameworks.
 
 \begin{table}[H]
     \centering
@@ -281,7 +281,7 @@ As their names suggest, the top-level components are the most important ones. Th
 \item \textbf{Sidebar}: Sidebar is also a navigation helper component for accessible pages for authenticated users. They offer similar functionality but are placed differently to separate the look and feel of the landing page and the application.
 \end{itemize}
 
-Figure \ref{fig:top-level-components} shows an example structure using them.
+Figure~\ref{fig:top-level-components} shows an example structure using them.
 
 \begin{figure}[H]
     \centering
@@ -296,17 +296,17 @@ Mid-level components are also fundamental components for the whole. They usually
 \item \textbf{Quiz card}: On "My quizzes" page, there is a list of Quiz cards. Each quiz card has a short title and buttons for editing, deleting, and taking the related quiz.
 \item \textbf{Learning list popup}: The learning list popup is available from the "My Quizzes" page to show. It helps manage the users which quiz they want to learn with the platform. It consists of a list of available quizzes and added quizzes to the learning list.
 \item \textbf{Question}: Each question type has a Question component. These components have different modes with a similar look but extended behavior because they are used for editing and taking quizzes or reviewing their result.
-\item \textbf{Review item}: Review item is a component used in the "Learn" page of the platform for listing the questions scheduled for review. A table row element displays questions, difficulty, review dates, and scores. It is built of smaller components such as text and buttons. Figure \ref{fig:review-item-component} shows an example of a review item in the table.
+\item \textbf{Review item}: Review item is a component used in the "Learn" page of the platform for listing the questions scheduled for review. A table row element displays questions, difficulty, review dates, and scores. It is built of smaller components such as text and buttons. Figure~\ref{fig:review-item-component} shows an example of a review item in the table.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/review-item-component.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/review-item-component.png}
     \caption{Review item component}
     \label{fig:review-item-component}
 \end{figure}
 
-Low-level components are everywhere in the application, as they are the essential building blocks for other components. They consist of styles of text, different kinds of input fields, buttons, and other interactive elements. They are primarily wrappers over basic HTML DOM elements with customizable styles and extended functionalities. Figure \ref{fig:low-level-component} shows an example of a styled text input field with a validation error.
+Low-level components are everywhere in the application, as they are the essential building blocks for other components. They consist of styles of text, different kinds of input fields, buttons, and other interactive elements. They are primarily wrappers over basic HTML DOM elements with customizable styles and extended functionalities. Figure~\ref{fig:low-level-component} shows an example of a styled text input field with a validation error.
 
 \begin{figure}[H]
     \centering
@@ -317,7 +317,7 @@ Low-level components are everywhere in the application, as they are the essentia
 
 \subsubsection{Routing and navigation structure}
 
-The application's routing is simple and self-describing. All the pages are available directly through in-app navigation or URLs. The naming convention follows a hierarchical structure using a / and page name and optional identifiers, e.g.,/my-quizzes, /quizzes/:quizId/take. Some pages, such as the landing page and, of course, the authentication-related pages, can be accessed without authentication. The user must have an account and be logged in for the others to visit. Table \ref{tab:navigation-and-routes} lists some of the most important routes for pages.
+The application's routing is simple and self-describing. All the pages are available directly through in-app navigation or URLs. The naming convention follows a hierarchical structure using a / and page name and optional identifiers, e.g.,/my-quizzes, /quizzes/:quizId/take. Some pages, such as the landing page and, of course, the authentication-related pages, can be accessed without authentication. The user must have an account and be logged in for the others to visit. Table~\ref{tab:navigation-and-routes} lists some of the most important routes for pages.
 
 \begin{table}[H]
     \centering
@@ -344,11 +344,13 @@ The application's routing is simple and self-describing. All the pages are avail
 
 \subsubsection{Frontend design}
 
-A good design can be a good starting point before implementing an application. For larger-scale projects with dedicated designers, a design starts from wireframes, which, after some iterations, become mockups and semi-functioning prototypes. As a two-person team without professional designers, we skipped the wireframe phase and started with mockups. As I was familiar with a popular design tool called Figma \footnote{https://www.figma.com}, I designed components and pages for the application. Figure \ref{fig:quiz-creation-page-initial-design} shows the initial design for the quiz creation page made with Figma.
+A good design can be a good starting point before implementing an application. For larger-scale projects with dedicated designers, a design starts from wireframes, which, after some iterations, become mockups and semi-functioning prototypes. As a two-person team without professional designers, we skipped the wireframe phase and started with mockups. As I was familiar with a popular design tool called Figma \footnote{https://www.figma.com}, I designed components and pages for the application. Figure~\ref{fig:quiz-creation-page-initial-design} shows the initial design for the quiz creation page made with Figma.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/quiz-creation-page-initial-design.png}
+    \frame{
+        \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/quiz-creation-page-initial-design.png}
+    }
     \caption{Initial design of the creation page}
     \label{fig:quiz-creation-page-initial-design}
 \end{figure}
@@ -359,7 +361,7 @@ I used the mockups as a starting point for the design because tailwindCSS allows
 
 This subsection outlines the basic actions and navigations available through descriptions and diagrams. I have broken down the diagrams into smaller sections to make them easier to understand. 
 
-The application's starting point for authenticated users is the "My Quizzes page." After the login flow, the user can access some features directly or go to a different page. These functions and pages are described visually in this diagram \ref{fig:flow-main}.
+The application's starting point for authenticated users is the \texttt{My Quizzes page}. After the login flow, the user can access some features directly or go to a different page. These functions and pages are described visually in this diagram~\ref{fig:flow-main}.
 
 \begin{figure}[H]
     \centering
@@ -368,25 +370,16 @@ The application's starting point for authenticated users is the "My Quizzes page
     \label{fig:flow-main}
 \end{figure}
 
-When the user first accesses the platform, it goes to the landing page. The login and sign-up pages are available without authentication, but the user must fill out the login form or create an account to access the others. From the user's perspective, this authentication flow is shown in Figure \ref{fig:flow-authentication}.
+The process of creating and editing a quiz is mostly identical. This flow is shown in figure~\ref{fig:flow-quiz-creation-and-edit}. The user can set the quiz title and description or provide a context for question generation. After that, the user can select a question type: single choice, multiple choice, or boolean, and the platform generates and shows the question using the context. Adding more questions or deleting already added ones are also available through this flow on this page.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth, keepaspectratio]{figures/flow-authentication.png}
-    \caption{Authentication flow diagram}
-    \label{fig:flow-authentication}
-\end{figure}
-
-The process of creating and editing a quiz is mostly identical. This flow is shown in figure \ref{fig:flow-quiz-creation-and-edit}. The user can set the quiz title and description or provide a context for question generation. After that, the user can select a question type: single choice, multiple choice, or boolean, and the platform generates and shows the question using the context. Adding more questions or deleting already added ones are also available through this flow on this page.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/flow-quiz-creation-and-edit.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/flow-quiz-creation-and-edit.png}
     \caption{Quiz creation and edit flow diagram}
     \label{fig:flow-quiz-creation-and-edit}
 \end{figure}
 
-When a user selects a quiz, the platform offers options to start taking it or continue an already-started but not finished one. When the user decides to start, a session is created, and the answers are saved automatically for this session. It stays open until the user does not submit their answer or starts a new session. After closing, the user is redirected to the results, which can be viewed from the Quiz history page. This quiz-taking flow is also displayed in Figure \ref{fig:flow-taking-quiz}.
+When a user selects a quiz, the platform offers options to start taking it or continue an already-started but not finished one. When the user decides to start, a session is created, and the answers are saved automatically for this session. It stays open until the users submit their answers or start a new session. After closing, the user is redirected to the results, which can be viewed from the Quiz history page. This quiz-taking flow is also displayed in Figure~\ref{fig:flow-taking-quiz}.
 
 \begin{figure}[H]
     \centering
@@ -395,7 +388,7 @@ When a user selects a quiz, the platform offers options to start taking it or co
     \label{fig:flow-taking-quiz}
 \end{figure}
 
-Reviewing questions is the core concept of spaced repetition. The users can manage which quizzes they want to learn, and the platform schedules them. The user can see and filter the questions scheduled for review on the Review page. It lists all the questions and adds options for the user to review. This review can be done one by one or simultaneously in the order specified by the platform. When the review is done, the platform schedules the questions for the following review and redirects the user to the learn page. Figure \ref{fig:flow-review-item} displays this question reviewing flow.
+Reviewing questions is the core concept of spaced repetition. The users can manage which quizzes they want to learn, and the platform schedules them. The user can see and filter the questions scheduled for review on the Review page. It lists all the questions and adds options for the user to review. This review can be done one by one or simultaneously in the order specified by the platform. When the review is done, the platform schedules the questions for the following review and redirects the user to the learn page. Figure~\ref{fig:flow-review-item} displays this question reviewing flow.
 
 \begin{figure}[H]
     \centering
@@ -406,7 +399,7 @@ Reviewing questions is the core concept of spaced repetition. The users can mana
 
 \section{Backend Design}
 
-The backend service is a monolith-styled service written in Go using the Echo web framework. It is a traditional API server that accesses the platform's functionalities. It is responsible for input validation, business logic, and data access and integrates external services like the question generator LLM. Overall, it is the core of the platform that acts as a glue service. This section outlines the backend service's architecture at a higher level, presents the main business logic and patterns used, and covers security.
+The backend service is a monolith-styled web service. It is a traditional API server that accesses the platform's functionalities. It is responsible for input validation, business logic, and data access and integrates external services like the question generator LLM. Overall, it is the core of the platform that acts as a glue service. This section outlines the backend service's architecture at a higher level, presents the main business logic and patterns used, and covers security.
 
 \subsection{High-level architecture}
 
@@ -431,7 +424,7 @@ The API design follows a traditional REST approach using JSON requests and respo
 
 \subsubsection{API Categories}
 
-API endpoints are categorized into two leading groups: those available for the user without authentication and those that require authentication. The unauthenticated endpoints are only for signing up for a new user account or logging into an existing account. The other group is categorized into a few smaller categories based on functionality, mostly corresponding to components in the business logic layer.
+API endpoints are categorized into two leading groups: those available for the user without authentication and those that require authentication. The unauthenticated endpoints are only for signing up for a new user account or logging into an existing account. The other group is categorized into a few smaller categories based on functionality.
 
 \textbf{Quizzes} The endpoints in this category relate to managing quizzes. This endpoint allows for creating new quizzes and modifying or deleting existing ones.
 
@@ -445,7 +438,7 @@ API endpoints are categorized into two leading groups: those available for the u
 
 \subsubsection{Request and response patterns}
 
-The backend service communicates with the backend with standard HTTP messages. While the clients expect the data to be in from-data format or url-encoded-form-data, it does it in JSON. Figure \ref{lst:http-request-and-response} shows an example request and its response processed by the server in HTTP format.
+The backend service communicates with the backend with standard HTTP messages. While the clients expect the data to be in form-data format or url-encoded-form-data, it does it in JSON. Figure~\ref{lst:http-request-and-response} shows an example request and its response processed by the server in HTTP format.
 
 \begin{lstlisting}[caption=HTTP request and response for authentication,label=lst:http-request-and-response]
 ---- Authentication request:
@@ -482,7 +475,7 @@ if err != nil {
 
 \subsubsection{Endpoint overview}
 
-The following tables list the application's endpoints grouped by categories.
+The API design is created using Postman\footnote{https://www.postman.com/}.The following tables list the application's endpoints grouped by categories.
 
 % auth
 \begin{table}[H]
@@ -613,11 +606,11 @@ Authentication is the process of identifying the user who has accessed software.
     \item \textbf{Other forms}: There are numerous more ways to do it, like OAuth (with many extensions), but for the platform, We chose a more uncomplicated solution, so I  do not detail them now.
 \end{itemize}
 
-We chose a session cookie-based form for the platform, which felt simple yet powerful for our use case. Session-based solutions suit us better for the monolith architecture because the state can be stored in a single server and does not have to be synchronized by other instances. The server issues the session token as HTTP cookies and sends it to the client after the user completes the login flow. The authentication-requiring endpoints check that this cookie exists and is valid before continuing to process the requests. Figure \ref{fig:authentication-sequence} shows the login flow with session cookies.
+We chose a session cookie-based form for the platform, which felt simple yet powerful for our use case. Session-based solutions suit us better for the monolith architecture because the state can be stored in a single server and does not have to be synchronized by other instances. The server issues the session token as HTTP cookies and sends it to the client after the user completes the login flow. The authentication-requiring endpoints check that this cookie exists and is valid before continuing to process the requests. Figure~\ref{fig:authentication-sequence} shows the login flow with session cookies.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth, keepaspectratio]{figures/authentication-sequence.png}
+    \includegraphics[width=0.9\textwidth, keepaspectratio]{figures/authentication-sequence.png}
     \caption{Login flow with session cookies}
     \label{fig:authentication-sequence}
 \end{figure}

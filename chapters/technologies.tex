@@ -37,7 +37,7 @@ Composition over inheritance is a commonly applied design principle that promote
 The language has an extensive set of tooling, including a compiler (go build), a package and dependency manager (go mod), a testing tool (go test), a code formatter (go fmt), and a language Server called (gopls\footnote{https://pkg.go.dev/golang.org/x/tools/gopls}). Most of them are deeply integrated into the ecosystem and come by default. Utilizing them, the developer could experience a fast, smooth, and efficient workflow experience.
 
 \subsubsection{Concurrency}
-Go features a simple yet robust concurrency model. It provides goroutines, lightweight threads managed by the Go runtime, and channels, facilitating safe and efficient communication between goroutines. It has an explicit syntax and is straightforward even for beginners, as the listing \ref{lst:goroutine} shows.
+Go features a simple yet robust concurrency model. It provides goroutines, lightweight threads managed by the Go runtime, and channels, facilitating safe and efficient communication between goroutines. It has an explicit syntax and is straightforward even for beginners, as the listing~\ref{lst:goroutine} shows.
 
 \begin{lstlisting}[caption=Calling a normal function as a goroutine,label=lst:goroutine, float]
 package main
@@ -143,7 +143,7 @@ The developers must write the SQL schema with special comments for the generator
 The templ is a reasonably new, upcoming templating language library and CLI tool that helps create dynamic HTML fragments type-safely. It has a special JSX-like syntax, which became popular in the JavaScript ecosystem but uses a combination of Go and HTML. It is built on Go's standard templating solution, offering a better developer experience with a friendly syntax, convenient-to-use tools, and less error-prone, type-safe code generation.
 
 \subsection{How does it work?}
-Thus, it is a code-generation tool that allows for language extension with special syntax. In the world of templ, everything is a component written in a particular templ function in Go. These functions return templ components that render HTML text and can contain HTML code with some Go logic. The component functions have named and typed parameters like others, making them fully type-safe and compatible with code completion tools. Figure \ref{fig:templ-generation} shows the process of code generation from templ code.
+Thus, it is a code-generation tool that allows for language extension with special syntax. In the world of templ, everything is a component written in a particular templ function in Go. These functions return templ components that render HTML text and can contain HTML code with some Go logic. The component functions have named and typed parameters like others, making them fully type-safe and compatible with code completion tools. Figure~\ref{fig:templ-generation} shows the process of code generation from templ code.
 
 \begin{figure}[!h]
     \centering
@@ -152,7 +152,7 @@ Thus, it is a code-generation tool that allows for language extension with speci
     \label{fig:templ-generation}
 \end{figure}
 
-Written code must follow strict coding rules and styles to generate the code called and used by the backend frameworks to render the page. The CLI contains a language server for code completion and syntax highlight, a code formatter, and a code generator tool. Figure \ref{fig:templ-rendering} shows the process of rendering a templ component.
+Written code must follow strict coding rules and styles to generate the code called and used by the backend frameworks to render the page. The CLI contains a language server for code completion and syntax highlight, a code formatter, and a code generator tool. Figure~\ref{fig:templ-rendering} shows the process of rendering a templ component.
 
 \begin{figure}[!h]
     \centering
@@ -171,13 +171,13 @@ One of the main goals is to create a SPA-like (single-page application) experien
 
 HTMX is like an extension of HTML, with 15 to 20 custom attributes that define how to process outgoing requests and incoming responses. The following ones are used the most.
 
-Each HTTP method has attributes related to it: \textbf{hx-get}, \textbf{hx-post}, \textbf{hx-put}, \textbf{hx-patch}, \textbf{hx-delete}. Each one has one parameter: the URL where the request has to be sent when the actions happen. The listing \ref{lst:htmx-logout} shows performing a POST request to /logout on the default action of a button.
+Each HTTP method has attributes related to it: \textbf{hx-get}, \textbf{hx-post}, \textbf{hx-put}, \textbf{hx-patch}, \textbf{hx-delete}. Each one has one parameter: the URL where the request has to be sent when the actions happen. The listing~\ref{lst:htmx-logout} shows performing a POST request to /logout on the default action of a button.
 
 \begin{lstlisting}[caption=Preforming an \textbf{hx-post} request,label=lst:htmx-logout, float]
 <button hx-post="/logout">Logout</button>
 \end{lstlisting}
 
-By default, on form submission, input value change, and button click, an HTMX request is performed when the method and URL are set. But there is a way to modify the default action trigger with \textbf{tx-trigger} attribute. It supports changing the event and allows the modifier to fine-grain the behavior, e.g., modifying an event, setting a delay, adding a throttle time, or filtering a key. The listing \ref{lst:htmx-trigger} shows performing a request on blur event with 300 ms of delay time.
+By default, on form submission, input value change, and button click, an HTMX request is performed when the method and URL are set. But there is a way to modify the default action trigger with \textbf{tx-trigger} attribute. It supports changing the event and allows the modifier to fine-grain the behavior, e.g., modifying an event, setting a delay, adding a throttle time, or filtering a key. The listing~\ref{lst:htmx-trigger} shows performing a request on blur event with 300 ms of delay time.
 
 \begin{lstlisting}[caption=Custom HTMX trigger,label=lst:htmx-trigger, float]
 <input 
@@ -189,7 +189,7 @@ By default, on form submission, input value change, and button click, an HTMX re
 </input>
 \end{lstlisting}
 
-Some attributes define the process of the response. The two most common are \textbf{hx-target} and \textbf{hx-swap}; the first tells the library which element to swap, and the other tells how to do it. The target can be set by referring to the ID of the HTML element or using a CSS selector with special modifiers like \textbf{closest}, \textbf{next}, and \textbf{previous}. The other property tells how to do it, for example, changing the element's content, changing the whole element, and inserting before/after the target. The listing \ref{lst:htmx-target} shows a request, which response is replacing the element with id \textbf{\#page}.
+Some attributes define the process of the response. The two most common are \textbf{hx-target} and \textbf{hx-swap}; the first tells the library which element to swap, and the other tells how to do it. The target can be set by referring to the ID of the HTML element or using a CSS selector with special modifiers like \textbf{closest}, \textbf{next}, and \textbf{previous}. The other property tells how to do it, for example, changing the element's content, changing the whole element, and inserting before/after the target. The listing~\ref{lst:htmx-target} shows a request, which response is replacing the element with id \textbf{\#page}.
 
 \begin{lstlisting}[caption=Setting HTMX target,label=lst:htmx-target, float]
 <a 
@@ -204,7 +204,7 @@ There are some cases when the website needs more complex logic, such as modifyin
 
 There are various methods to send data to the server, such as including it in the HTTP header or using the values from <input /> tags with \textbf{hx-include} or \textbf{hx-vals}.
 
-If the application consists of several pages, navigation between them is necessary. This can be done with HTMX requests, in which the server sends not only the page but also the updated navigation bar. A request will cause the new page to appear and the navigation bar to be updated accordingly. This can be easily implemented with HTMX out-of-band requests and tags. The listing \ref{lst:htmx-oob} shows the request for a page and responses to the new page with the updated navigation bar.
+If the application consists of several pages, navigation between them is necessary. This can be done with HTMX requests, in which the server sends not only the page but also the updated navigation bar. A request will cause the new page to appear and the navigation bar to be updated accordingly. This can be easily implemented with HTMX out-of-band requests and tags. The listing~\ref{lst:htmx-oob} shows the request for a page and responses to the new page with the updated navigation bar.
 
 \begin{lstlisting}[caption=Navigation with HTMX out-of-band request,label=lst:htmx-oob, float]
 // The initial navigation bar
