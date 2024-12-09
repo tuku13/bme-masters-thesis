@@ -8,7 +8,7 @@
 %----------------------------------------------------------------------------
 \chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
 
-Az online e-learning platformok nagy népszerűségre tettek szert az utóbbi években azzal, hogy rugalmas és személyre szabott tanulást kínálnak. Ezek a platformok jellemzően olyan funkciókat érhetők el, mint a manuális flashcard készítés, kvízek és személyre szabott tananyag ütemezés. A nagy nyelvi modellek (LLM-ek) ma már szinte minden területen használtak, beleértve az üzleti életet, az oktatást, a technológiát és a tudományt. Ezen modellek képesek az emberihez hasonló szövegek megértésére és megválaszolására. A dolgozat célja a \texttt{SpacedAce} nevű modern e-learning platform megtervezése, megvalósítása és bemutatása, amely az időközönkénti ismétlésen (spaced repetition) alapuló személyre szabott tanulást LLM-ekkel integrálja.
+Az online e-learning platformok nagy népszerűségre tettek szert az utóbbi években azzal, hogy rugalmas és személyre szabott tanulást kínálnak. Ezen platformok jellemzően olyan funkciókat kínálnak, mint a manuális flashcard készítés, kvízek és személyre szabott tananyag-ütemezés. Jelenleg a nagy nyelvi modelleket (LLM-eket) szinte minden területen alkalmazzák: az üzleti életben, az oktatásban, a technológiában és a tudományban. Ezen modellek képesek az emberihez hasonló szövegek megértésére és megválaszolására. A dolgozat célja a \texttt{SpacedAce} nevű modern e-learning platform megtervezése, megvalósítása és bemutatása, amely az időközönkénti ismétlésen (spaced repetition) alapuló személyre szabott tanulást LLM-ekkel integrálja.
 
 A platform fő szolgáltatása, a backend Go nyelven íródott Echo web keretrendszer használatával, míg a platform frontendje HTMX-el, egy egyedi frontend könyvtárral, mely közel nulla JavaScript használatát ígéri interaktív és dinamikus webes alkalmazások létrehozásához.
 
@@ -16,7 +16,7 @@ A platform egy finomhangolt, előre tanított LLM-et integrál, mely kérdéseke
 
 A főbb funkciók közé tartozik a kérdésgenerálás, a kvízkészítés, a tananyag ütemezés, az automatikus értékelés és a pontozás. A tananyagot automatikusan ütemezi egy személyre szabott, ismétléses ütemezésen alapuló algoritmus segítségével, amely alkalmazkodik az egyéni tanulási igényekhez és optimalizálja a tudás megőrzését.
 
-A felvázolt e-learning platform bemutatja a nem hagyományos webes technológiák, például az HTMX alkalmazását és az LLM-ek oktatási technológiában rejlő lehetőségeit.
+A dolgozat a SpacedAce e-learning platform technológiai szempontból való megértésére összpontosít. Bemutat néhány különleges és feltörekvő frontend, illetve backend web technológiát az alkalmazás komponenseinek tervezésén és megvalósításán keresztül.
 
 \vfill
 \selectenglish
@@ -27,7 +27,7 @@ A felvázolt e-learning platform bemutatja a nem hagyományos webes technológi�
 %----------------------------------------------------------------------------
 \chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
 
-Online e-learning platforms have gained popularity in recent years because they allow personalized and flexible learning. These platforms typically offer features such as manual flashcard creation, quizzes, and personalized learning schedules. Today, Large language models (LLMs) are used in nearly every field, including business, education, technology, and science. These models are capable of understanding and responding to human-like texts. This work aims to design, implement, and present \texttt{SpacedAce}, a modern learning platform that integrates spaced repetition-based personalized learning with LLMs.
+Online e-learning platforms have gained popularity in recent years because they allow personalized and flexible learning. These platforms typically offer features such as manual flashcard creation, quizzes, and personalized learning schedules. Currently, Large language models (LLMs) are applied in almost every field: business, education, technology, and science. These models are capable of understanding and responding to human-like texts. This work aims to design, implement, and present \texttt{SpacedAce}, a modern learning platform that integrates spaced repetition-based personalized learning with LLMs.
 
 The platform's main service, the backend, is written in Go using the Echo web framework, while the platform's frontend utilizes HTMX, a unique frontend library that promises nearly zero JavaScript to create interactive and dynamic web applications.
 
@@ -35,7 +35,7 @@ The platform integrates a fine-tuned pre-trained LLM to generate questions from 
 
 Key features include question generation, quiz creation, learning material scheduling, automatic evaluation, and scoring. The learning materials are automatically scheduled using a personalized, spaced, repetition-based algorithm that adapts to individual learning needs and optimizes knowledge retention.
 
-The proposed e-learning platform shows the application of untraditional web technologies such as HTMX and the potential of LLMs in educational technology.
+This thesis focuses on understanding the SpacedAce e-learning platform from a technology aspect. It showcases a few special and upcoming frontend and backend web technologies through the design and implementation of the application components.
 
 \vfill
 \selectthesislanguage
